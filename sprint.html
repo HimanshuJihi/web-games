@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>100m Sprint</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #70c5ce;
+            font-family: sans-serif;
+            margin: 0;
+            overflow: hidden;
+            touch-action: manipulation; /* मोबाइल पर डबल-टैप ज़ूम को रोकता है */
+        }
+        h1 {
+            color: white;
+            text-shadow: 2px 2px 4px #000000;
+        }
+        .game-container {
+            width: 90%;
+            max-width: 800px;
+            background: #f0e68c;
+            border: 4px solid #8b4513;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .track {
+            position: relative;
+            height: 100px;
+            background: #d2b48c;
+            border-radius: 5px;
+            border-top: 2px solid #8b4513;
+            border-bottom: 2px solid #8b4513;
+        }
+        .track::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: white;
+            border-top: 1px dashed #8b4513;
+            border-bottom: 1px dashed #8b4513;
+            transform: translateY(-50%);
+        }
+        .player, .opponent {
+            position: absolute;
+            width: 30px;
+            height: 40px;
+            left: 0;
+            transition: left 0.1s linear;
+            border-radius: 5px;
+        }
+        .player {
+            background-color: red;
+            top: 5px;
+        }
+        .opponent {
+            background-color: blue;
+            bottom: 5px;
+        }
+        .finish-line {
+            position: absolute;
+            right: 10px;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background-image: repeating-linear-gradient(white 0 10px, black 10px 20px);
+        }
+        .info-display {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .tap-button {
+            width: 120px;
+            height: 120px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 50%;
+            border: 5px solid white;
+            cursor: pointer;
+            user-select: none; /* रैपिड टैप पर टेक्स्ट सिलेक्शन को रोकता है */
+        }
+        #tapButton1 { background-color: #4682b4; color: white; }
+        #tapButton2 { background-color: #32cd32; color: white; }
+        #restartButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            display: none; /* शुरुआत में छिपा हुआ */
+        }
+        .settings-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            color: white;
+            margin: 10px 0;
+            font-size: 18px;
+        }
+        .info-display.countdown {
+            font-size: 72px;
+            font-weight: bold;
+            color: #ffc107; /* Yellow color for countdown */
+        }
+        .exit-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 10px 20px;
+            background-color: #f44336; /* Red color */
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            z-index: 10; /* Ensure it's above other elements */
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="exit-button">Back to Menu</a>
+    <h1>100 Meter Sprint</h1>
+    <div class="settings-container">
+        <label for="difficultySelect">Difficulty:</label>
+        <select id="difficultySelect">
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hard">Hard</option>
+        </select>
+    </div>
+    <div class="game-container">
+        <div class="track">
+            <div id="player" class="player"></div>
+            <div id="opponent" class="opponent"></div>
+            <div class="finish-line"></div>
+        </div>
+    </div>
+    <div id="infoDisplay" class="info-display">
+        <!-- यह टेक्स्ट अब जावास्क्रिप्ट से सेट होगा -->
+    </div>
+    <div class="controls" style="display: none;">
+        <button id="tapButton1" class="tap-button">A</button>
+        <button id="tapButton2" class="tap-button">L</button>
+   </div>
+    <style>
+        #startButton {
+            font-size: 2em; /* साइज़ को बड़ा कर दिया */
+        }</style>
+    <button id="startButton">Start</button>
+    <button id="restartButton" style="display: none;">Play Again</button>
+
+    <script src="sprint.js"></script>
+</body>
+</html>

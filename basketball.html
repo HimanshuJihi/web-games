@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Basketball Free Throws</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #607D8B; /* A neutral blue-gray background */
+            font-family: sans-serif;
+            margin: 0;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        h1 {
+            color: white;
+            text-shadow: 2px 2px 4px #000000;
+        }
+        #gameCanvas {
+            background-color: #B0C4DE; /* Light steel blue, like an indoor court */
+            border: 5px solid #455A64;
+            border-radius: 10px;
+            max-width: 90vw;
+            max-height: 50vh; /* Reduced to make space for other UI elements */
+            aspect-ratio: 2 / 3;
+        }
+        .info {
+            color: white;
+            font-size: 24px;
+            margin-top: 10px;
+            width: 90%;
+            max-width: 400px;
+            display: flex;
+            justify-content: space-around;
+        }
+        #challenge-display {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .exit-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 10px 20px;
+            background-color: #f44336; /* Red color */
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            z-index: 10; /* Ensure it's above other elements */
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="exit-button">Back to Menu</a>
+    <h1>Basketball Free Throws</h1>
+    <div id="challenge-display"></div>
+    <canvas id="gameCanvas"></canvas>
+    <div class="info">
+        <span>Score: <span id="score">0</span> / <span id="target-score">0</span></span>
+        <span id="shot-clock-display" style="display: none;">Time: <span id="shot-clock">5</span></span>
+        <span>Shots Left: <span id="shots-left">0</span></span>
+    </div>
+    <button id="next-challenge-button" style="display: none;">Next Challenge</button>
+    <button id="retry-button" style="display: none;">Retry</button>
+
+    <script src="basketball.js"></script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+// DOM Elements
+const player = document.getElementById('player');
+const opponent = document.getElementById('opponent');
+const tapButton1 = document.getElementById('tapButton1');
+const tapButton2 = document.getElementById('tapButton2');
+const infoDisplay = document.getElementById('infoDisplay');
+const restartButton = document.getElementById('restartButton');
+const difficultySelect = document.getElementById('difficultySelect');
+const startButton = document.getElementById('startButton');
+
+// Game State
+let gameState = 'idle'; // 'idle', 'countdown', 'running', 'finished'
+let playerPosition = 0; // प्रतिशत में
+let opponentPosition = 0;
+let lastButtonTapped = 0; // 1 or 2
+let startTime = 0;
+let gameLoopId = null;
+let countdownTimeout = null;
+
+// Game Constants
+const MOVE_INCREMENT = 1.5; // हर सफल टैप पर आगे बढ़ने का प्रतिशत
+const DIFFICULTY_LEVELS = {
+    easy: { min: 0.06, max: 0.14 },
+    medium: { min: 0.09, max: 0.19 },
+    hard: { min: 0.12, max: 0.22 }
+};
+let opponentMinMove;
+let opponentMaxMove;
+
+function resetGame() {
+    // किसी भी चल रहे लूप या टाइमआउट को साफ़ करें
+    if (gameLoopId) cancelAnimationFrame(gameLoopId);
+    if (countdownTimeout) clearTimeout(countdownTimeout);
+
+    infoDisplay.classList.remove('countdown');
+
+    // गेम वेरिएबल्स रीसेट करें
+    gameState = 'idle';
+    playerPosition = 0;
+    opponentPosition = 0;
+    lastButtonTapped = 0;
+    startTime = 0;
+    player.style.left = '0%';
+    opponent.style.left = '0%';
+
+    // UI को शुरुआती स्थिति में रीसेट करें
+    infoDisplay.textContent = 'Press Start to begin';
+    startButton.style.display = 'block';
+    difficultySelect.style.display = 'flex';
+    restartButton.style.display = 'none';
+    document.querySelector('.controls').style.display = 'none';
+    tapButton1.disabled = true;
+    tapButton2.disabled = true;
+}
+
+function runCountdown() {
+    gameState = 'countdown';
+    infoDisplay.classList.add('countdown');
+
+    const steps = ['3', '2', '1'];
+    steps.forEach((step, index) => {
+        countdownTimeout = setTimeout(() => { if (gameState === 'countdown') infoDisplay.textContent = step; }, index * 1000);
+    });
+
+    countdownTimeout = setTimeout(() => {
+        if (gameState === 'countdown') {
+            infoDisplay.textContent = 'Go!';
+            infoDisplay.classList.remove('countdown');
+            startGame();
+        }
+    }, 3000);
+}
+
+function startGame() {
+    gameState = 'running';
+    startTime = Date.now();
+    document.querySelector('.controls').style.display = 'flex';
+    tapButton1.disabled = false;
+    tapButton2.disabled = false;
+    gameLoop(); // गेम लूप शुरू करें
+}
+
+function handleTap(buttonId) {
+    if (gameState !== 'running') return;
+
+    // केवल तभी आगे बढ़ें जब अलग बटन टैप किया गया हो
+    if (buttonId !== lastButtonTapped) {
+        playerPosition += MOVE_INCREMENT;
+        lastButtonTapped = buttonId;
+    }
+}
+
+function update() {
+    // प्लेयर की पोज़िशन अपडेट करें
+    player.style.left = `${playerPosition}%`;
+
+    // Opponent's position
+    if (gameState === 'running') {
+        const opponentMove = Math.random() * (opponentMaxMove - opponentMinMove) + opponentMinMove;
+        opponentPosition += opponentMove;
+        opponent.style.left = `${opponentPosition}%`;
+    }
+
+    // फिनिश लाइन की जाँच करें
+    const playerFinished = playerPosition >= 100;
+    const opponentFinished = opponentPosition >= 100;
+
+    if (playerFinished || opponentFinished) {
+        gameState = 'finished';
+        const finalTime = (Date.now() - startTime) / 1000;
+
+        // Clamp positions
+        if (playerFinished) player.style.left = '100%';
+        if (opponentFinished) opponent.style.left = '100%';
+
+        // Determine winner
+        if (playerFinished && !opponentFinished) {
+            infoDisplay.textContent = `You won! Time: ${finalTime.toFixed(2)} seconds`;
+        } else if (!playerFinished && opponentFinished) {
+            infoDisplay.textContent = `Computer won!`;
+        } else { // Tie-break
+            if (playerPosition > opponentPosition) {
+                infoDisplay.textContent = `You won! Time: ${finalTime.toFixed(2)} seconds`;
+            } else {
+                infoDisplay.textContent = `Computer won!`;
+            }
+        }
+
+        // बटनों को डिसेबल करें और रीस्टार्ट बटन दिखाएं
+        tapButton1.disabled = true;
+        tapButton2.disabled = true;
+        document.querySelector('.controls').style.display = 'none';
+        restartButton.style.display = 'block';
+
+        cancelAnimationFrame(gameLoopId); // लूप रोकें
+    } else if (gameState === 'running') {
+        const elapsedTime = (Date.now() - startTime) / 1000;
+        infoDisplay.textContent = `समय: ${elapsedTime.toFixed(2)}`;
+    }
+}
+
+function gameLoop() {
+    if (gameState !== 'running') return;
+    update();
+    gameLoopId = requestAnimationFrame(gameLoop);
+}
+
+// इवेंट लिस्नर
+function handleStartClick() {
+    startButton.style.display = 'none';
+    difficultySelect.style.display = 'none';
+
+    // कठिनाई स्तर सेट करें
+    const difficulty = difficultySelect.value;
+    opponentMinMove = DIFFICULTY_LEVELS[difficulty].min;
+    opponentMaxMove = DIFFICULTY_LEVELS[difficulty].max;
+
+    runCountdown();
+}
+// 'mousedown' और 'touchstart' दोनों का उपयोग करके मोबाइल और डेस्कटॉप दोनों के लिए सपोर्ट
+tapButton1.addEventListener('mousedown', () => handleTap(1));
+tapButton2.addEventListener('mousedown', () => handleTap(2));
+tapButton1.addEventListener('touchstart', (e) => { e.preventDefault(); handleTap(1); });
+tapButton2.addEventListener('touchstart', (e) => { e.preventDefault(); handleTap(2); });
+
+window.addEventListener('keydown', (e) => {
+    // सुनिश्चित करें कि कीबोर्ड इनपुट गेम को प्रभावित न करे जब वह चल नहीं रहा हो
+    if (gameState === 'running') {
+        if (e.code === 'KeyA') {
+            handleTap(1);
+        } else if (e.code === 'KeyL') {
+            handleTap(2);
+        }
+    }
+});
+
+startButton.addEventListener('click', handleStartClick);
+restartButton.addEventListener('click', resetGame);
+difficultySelect.addEventListener('change', resetGame);
+
+// शुरुआती सेटअप
+resetGame();

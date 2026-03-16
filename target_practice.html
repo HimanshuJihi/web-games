@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Target Practice</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #4CAF50; /* Green background */
+            font-family: sans-serif;
+            margin: 0;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        h1 {
+            color: white;
+            text-shadow: 2px 2px 4px #000000;
+        }
+        #gameCanvas {
+            background-color: #8BC34A; /* Lighter green */
+            border: 5px solid #388E3C;
+            border-radius: 10px;
+            max-width: 90vw;
+            max-height: 70vh;
+            aspect-ratio: 4 / 3; /* A common aspect ratio for games */
+        }
+        .info {
+            color: white;
+            font-size: 24px;
+            margin-top: 10px;
+            width: 90%;
+            max-width: 400px;
+            display: flex;
+            justify-content: space-around;
+        }
+        .exit-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 10px 20px;
+            background-color: #f44336; /* Red color */
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="exit-button">Back to Menu</a>
+    <h1>Target Practice</h1>
+    <canvas id="gameCanvas"></canvas>
+    <div class="info">Score: <span id="score">0</span> / <span id="target-score">0</span> | Time: <span id="time-left">30</span>s</div>
+    <button id="gameControlButton" style="margin-top: 10px; padding: 10px 20px; font-size: 18px;">Start Game</button>
+    <script src="target_practice.js"></script>
+</body>
+</html>

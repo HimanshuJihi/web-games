@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Championship</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            background-color: #0095ff;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1, h2 {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .game-menu {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px; /* Space between buttons */
+        }
+        .game-menu a {
+            text-decoration: none;
+            font-size: 24px;
+            color: white;
+            background-color: #ff0000;
+            padding: 15px 30px;
+            border-radius: 12px;
+            transition: background-color 0.3s;
+            display: inline-block; /* Ensures padding and other properties apply correctly */
+        }
+        .game-menu a:hover {
+            background-color: #6d05ff;
+        }
+    </style>
+</head>
+<body>
+    <h1>World Championship</h1>
+    <h2>Choose a Game</h2>
+    <ul class="game-menu">
+        <li><a href="curling.html">Curling</a></li>
+        <li><a href="sprint/sprint.html">100 Meter Sprint</a></li>
+        <li><a href="basketball/basketball.html">Basketball Free Throws</a></li>
+        <li><a href="target_practice.html">Target Practice</a></li>
+        <li><a href="archery.html">Archery</a></li>
+    </ul>
+</body>
+</html>

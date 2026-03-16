@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Archery</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #00695C; /* Dark Teal */
+            font-family: sans-serif;
+            margin: 0;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        h1 {
+            color: white;
+            text-shadow: 2px 2px 4px #000000;
+        }
+        #gameCanvas {
+            background-color: #4DB6AC; /* Lighter Teal */
+            border: 5px solid #004D40;
+            border-radius: 10px;
+            max-width: 90vw;
+            max-height: 70vh;
+            aspect-ratio: 16 / 9;
+        }
+        .info {
+            color: white;
+            font-size: 24px;
+            margin-top: 10px;
+            width: 90%;
+            max-width: 500px;
+            display: flex;
+            justify-content: space-around;
+        }
+        .exit-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            z-index: 10;
+        }
+        #arrow-selection {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        .arrow-btn {
+            padding: 8px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 2px solid white;
+            background-color: transparent;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .arrow-btn.selected {
+            background-color: white;
+            color: #00695C;
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="exit-button">Back to Menu</a>
+    <h1>Archery</h1>
+    <canvas id="gameCanvas"></canvas>
+    <div class="info">Score: <span id="score">0</span> / <span id="target-score">0</span> | Arrows: <span id="arrows-left">0</span></div>
+    <div id="arrow-selection" style="display: none;">
+        <button class="arrow-btn selected" data-arrow-type="standard">Standard</button>
+        <button class="arrow-btn" data-arrow-type="heavy">Heavy</button>
+        <button class="arrow-btn" data-arrow-type="light">Light</button>
+    </div>
+    <button id="gameControlButton" style="margin-top: 10px; padding: 10px 20px; font-size: 18px;">Start Game</button>
+    <script src="archery.js"></script>
+</body>
+</html>

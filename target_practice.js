@@ -32,7 +32,13 @@ let spawnInterval = null;
 let gameLoopId = null;
 let countdownInterval = null;
 
-let currentLevelIndex = 0;
+// Auto-load saved level from browser's localStorage
+let savedLevel = localStorage.getItem('targetSavedLevel');
+let currentLevelIndex = savedLevel !== null ? parseInt(savedLevel) : 0;
+if (isNaN(currentLevelIndex) || currentLevelIndex >= LEVELS.length || currentLevelIndex < 0) {
+    currentLevelIndex = 0;
+}
+
 let gameState = 'menu'; // 'menu', 'countdown', 'playing', 'level_failed', 'level_complete', 'game_complete'
 let countdownValue = 3;
 
@@ -144,6 +150,9 @@ function setupLevel(levelIndex) {
         return;
     }
 
+    // Auto-save current progress
+    localStorage.setItem('targetSavedLevel', currentLevelIndex);
+
     const level = LEVELS[levelIndex];
     score = 0;
     timeLeft = GAME_DURATION;
@@ -194,9 +203,11 @@ function completeLevel() {
     if (currentLevelIndex + 1 >= LEVELS.length) {
         gameState = 'game_complete';
         gameControlButton.textContent = 'Play Again';
+        localStorage.setItem('targetSavedLevel', 0); // Reset save for next time
     } else {
         gameState = 'level_complete';
         gameControlButton.textContent = 'Next Level';
+        localStorage.setItem('targetSavedLevel', currentLevelIndex + 1); // Save unlocked next level
     }
     gameControlButton.style.display = 'block';
 }

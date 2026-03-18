@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Skeet Shooting</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #333; 
+            font-family: sans-serif;
+            margin: 0;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        h1 { color: white; margin: 5px 0;}
+        #gameCanvas {
+            /* Creates a Sky and Grass background without complex canvas drawing */
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 60%, #4CAF50 60%, #4CAF50 100%);
+            border: 5px solid #222;
+            border-radius: 10px;
+            max-width: 95vw;
+            max-height: 80vh;
+            aspect-ratio: 16 / 9;
+            cursor: crosshair;
+        }
+        .info {
+            color: white;
+            font-size: 20px;
+            margin-top: 10px;
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            justify-content: space-around;
+        }
+        .exit-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        #gameControlButton { margin-top: 10px; padding: 10px 20px; font-size: 18px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="exit-button">Back to Menu</a>
+    <h1>Skeet Shooting</h1>
+    <canvas id="gameCanvas"></canvas>
+    <div class="info">Score: <span id="score">0</span> / <span id="target-score">0</span> | Level: <span id="round">1</span> | Ammo: <span id="ammo">0</span></div>
+    <button id="gameControlButton">Start Game</button>
+    <script src="skeet_shooting.js"></script>
+</body>
+</html>

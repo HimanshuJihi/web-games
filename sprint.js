@@ -7,6 +7,8 @@ const infoDisplay = document.getElementById('infoDisplay');
 const restartButton = document.getElementById('restartButton');
 const difficultySelect = document.getElementById('difficultySelect');
 const startButton = document.getElementById('startButton');
+const bestTimeDisplay = document.getElementById('bestTimeDisplay');
+const newRecordMsg = document.getElementById('newRecordMsg');
 
 // Game State
 let gameState = 'idle'; // 'idle', 'countdown', 'running', 'finished'
@@ -51,6 +53,7 @@ function resetGame() {
     document.querySelector('.controls').style.display = 'none';
     tapButton1.disabled = true;
     tapButton2.disabled = true;
+    updateBestTimeDisplay();
 }
 
 function runCountdown() {
@@ -116,11 +119,13 @@ function update() {
         // Determine winner
         if (playerFinished && !opponentFinished) {
             infoDisplay.textContent = `You won! Time: ${finalTime.toFixed(2)} seconds`;
+            checkAndSaveBestTime(finalTime);
         } else if (!playerFinished && opponentFinished) {
             infoDisplay.textContent = `Computer won!`;
         } else { // Tie-break
             if (playerPosition > opponentPosition) {
                 infoDisplay.textContent = `You won! Time: ${finalTime.toFixed(2)} seconds`;
+                checkAndSaveBestTime(finalTime);
             } else {
                 infoDisplay.textContent = `Computer won!`;
             }
@@ -143,6 +148,38 @@ function gameLoop() {
     if (gameState !== 'running') return;
     update();
     gameLoopId = requestAnimationFrame(gameLoop);
+}
+
+// Best Time Logic
+function checkAndSaveBestTime(time) {
+    const difficulty = difficultySelect.value;
+    let bestTime = localStorage.getItem(`sprintBestTime_${difficulty}`);
+    if (!bestTime || time < parseFloat(bestTime)) {
+        localStorage.setItem(`sprintBestTime_${difficulty}`, time);
+        updateBestTimeDisplay();
+        showNewRecordAnimation();
+    }
+}
+
+function showNewRecordAnimation() {
+    newRecordMsg.style.display = 'block';
+    newRecordMsg.style.animation = 'none'; // reset animation if already running
+    void newRecordMsg.offsetWidth; // trigger browser reflow
+    newRecordMsg.style.animation = 'popupFade 3s ease-in-out forwards';
+
+    setTimeout(() => {
+        newRecordMsg.style.display = 'none';
+    }, 3000);
+}
+
+function updateBestTimeDisplay() {
+    const difficulty = difficultySelect.value;
+    let bestTime = localStorage.getItem(`sprintBestTime_${difficulty}`);
+    if (bestTime) {
+        bestTimeDisplay.textContent = `Best Time: ${parseFloat(bestTime).toFixed(2)}s`;
+    } else {
+        bestTimeDisplay.textContent = `Best Time: --`;
+    }
 }
 
 // इवेंट लिस्नर

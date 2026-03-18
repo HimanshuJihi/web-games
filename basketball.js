@@ -25,7 +25,13 @@ const challenges = [
 ];
 
 // Game state
-let currentChallengeIndex = 0;
+// Auto-load saved challenge from browser's localStorage
+let savedChallenge = localStorage.getItem('basketballSavedChallenge');
+let currentChallengeIndex = savedChallenge !== null ? parseInt(savedChallenge) : 0;
+if (isNaN(currentChallengeIndex) || currentChallengeIndex >= challenges.length || currentChallengeIndex < 0) {
+    currentChallengeIndex = 0;
+}
+
 let currentScore = 0;
 let shotsLeft = 0;
 let gameState = 'playing'; // 'playing', 'won', 'lost', 'end'
@@ -160,10 +166,14 @@ function setupChallenge(challengeIndex) {
         retryButton.textContent = "Play Again";
         retryButton.style.display = 'block';
         nextChallengeButton.style.display = 'none';
+        localStorage.setItem('basketballSavedChallenge', 0); // Reset save for next time
         return;
     }
 
     currentChallengeIndex = challengeIndex;
+    // Auto-save current progress
+    localStorage.setItem('basketballSavedChallenge', currentChallengeIndex);
+
     const challenge = challenges[currentChallengeIndex];
     hoop.speedX = (challenge.hoopSpeed || 0) * scale;
 
@@ -247,6 +257,7 @@ function checkChallengeStatus() {
         challengeDisplayEl.innerHTML = `<h2>Level ${currentChallengeIndex + 1} Complete!</h2>`;
         if (currentChallengeIndex < challenges.length - 1) {
             nextChallengeButton.style.display = 'block';
+            localStorage.setItem('basketballSavedChallenge', currentChallengeIndex + 1); // Save unlocked next level
         } else {
             // Last level won
             setupChallenge(currentChallengeIndex + 1);

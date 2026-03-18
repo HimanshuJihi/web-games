@@ -47,7 +47,14 @@ let currentArrowType = 'standard';
 let isDragging = false;
 let dragStart = { x: 0, y: 0 };
 let dragPower = { x: 0, y: 0 };
-let currentLevelIndex = 0;
+
+// Auto-load saved level from browser's localStorage
+let savedLevel = localStorage.getItem('archerySavedLevel');
+let currentLevelIndex = savedLevel !== null ? parseInt(savedLevel) : 0;
+if (isNaN(currentLevelIndex) || currentLevelIndex >= LEVELS.length || currentLevelIndex < 0) {
+    currentLevelIndex = 0;
+}
+
 let countdownValue = 3;
 let countdownInterval = null;
 let lastHitArrowState = null; // To store arrow state at impact
@@ -262,6 +269,9 @@ function setupLevel(levelIndex) {
         return;
     }
 
+    // Auto-save current progress
+    localStorage.setItem('archerySavedLevel', currentLevelIndex);
+
     const level = LEVELS[levelIndex];
     score = 0;
     arrowsLeft = level.arrows;
@@ -328,16 +338,22 @@ function update() {
     arrow.angle = Math.atan2(arrow.velocityY, arrow.velocityX);
 
     // --- Hit Detection ---
-    // --- BUG FIX: Use arrow tip for hit detection, not its center ---
     const arrowTipX = arrow.x + (50 * scale) * Math.cos(arrow.angle);
     const arrowTipY = arrow.y + (50 * scale) * Math.sin(arrow.angle);
 
-    const dx = arrowTipX - target.x;
-    const dy = arrowTipY - target.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+    // 2D गेम में सही स्कोर के लिए, हम तब तक इंतज़ार करते हैं जब तक तीर की नोक निशाने की 
+    // बीच वाली वर्टिकल लाइन (target.x) तक नहीं पहुँच जाती।
+    const prevArrowTipX = arrowTipX - arrow.velocityX;
 
-    if (distance < target.radius) {
+    if (prevArrowTipX <= target.x && arrowTipX >= target.x) {
+        const dy = arrowTipY - target.y;
+        const distance = Math.abs(dy); // केंद्र से केवल वर्टिकल दूरी मापें
+
+        if (distance <= target.radius) {
         gameState = 'hit'; // Stop the arrow's physics updates
+
+            // तीर को बिल्कुल बीच वाली लाइन पर सेट करें ताकि वह धंसा हुआ दिखे
+            arrow.x -= (arrowTipX - target.x);
 
         // Store the arrow's state at the moment of impact for drawing
         lastHitArrowState = {
@@ -347,14 +363,14 @@ function update() {
             properties: arrow.properties
         };
 
-        hitMarks.push({ x: arrowTipX, y: arrowTipY });
+            hitMarks.push({ x: target.x, y: arrowTipY }); // हिट मार्क को भी बीच वाली लाइन पर बनाएँ
         // New scoring system based on colored rings
         let points = 0;
-        if (distance < target.radius * 0.2) points = 10; // Yellow
-        else if (distance < target.radius * 0.4) points = 7; // Red
-        else if (distance < target.radius * 0.6) points = 5; // Blue
-        else if (distance < target.radius * 0.8) points = 3; // Black
-        else points = 1; // White
+            if (distance <= target.radius * 0.2) points = 10; // Yellow
+            else if (distance <= target.radius * 0.4) points = 7; // Red
+            else if (distance <= target.radius * 0.6) points = 5; // Blue
+            else if (distance <= target.radius * 0.8) points = 3; // Black
+            else points = 1; // White
         
         score += points;
         scoreEl.textContent = score;
@@ -362,6 +378,7 @@ function update() {
         // Wait a moment to show the hit before starting the next shot
         setTimeout(() => nextShot(), 500); // 500ms delay
         return; // Exit update function for this frame
+        }
     }
 
     // Check if off-screen
@@ -404,9 +421,11 @@ function completeLevel() {
     if (currentLevelIndex + 1 >= LEVELS.length) {
         gameState = 'game_complete';
         gameControlButton.textContent = 'Play Again';
+        localStorage.setItem('archerySavedLevel', 0); // Game beaten, reset save for next time
     } else {
         gameState = 'level_complete';
         gameControlButton.textContent = 'Next Level';
+        localStorage.setItem('archerySavedLevel', currentLevelIndex + 1); // Save unlocked next level
     }
     gameControlButton.style.display = 'block';
     arrowSelectionContainer.style.display = 'none';

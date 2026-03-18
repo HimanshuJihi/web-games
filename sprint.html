@@ -28,14 +28,17 @@
             border: 4px solid #8b4513;
             border-radius: 10px;
             padding: 20px;
+        perspective: 800px; /* 3D Perspective space */
         }
         .track {
             position: relative;
-            height: 100px;
+        height: 120px; /* Thicker track for 3D look */
             background: #d2b48c;
             border-radius: 5px;
-            border-top: 2px solid #8b4513;
-            border-bottom: 2px solid #8b4513;
+        border: 2px solid #8b4513;
+        transform: rotateX(40deg); /* Tilt track backwards */
+        transform-style: preserve-3d;
+        box-shadow: 0 20px 20px rgba(0,0,0,0.4);
         }
         .track::before {
             content: '';
@@ -51,27 +54,28 @@
         }
         .player, .opponent {
             position: absolute;
-            width: 30px;
-            height: 40px;
+        font-size: 45px;
             left: 0;
             transition: left 0.1s linear;
-            border-radius: 5px;
+        transform: rotateX(-40deg) translateY(-20px) scaleX(-1); /* Stand upright and face right */
+        transform-origin: bottom;
+        filter: drop-shadow(0px 15px 5px rgba(0,0,0,0.5)); /* 3D Shadow */
+        z-index: 2;
         }
         .player {
-            background-color: red;
-            top: 5px;
+        top: 10px;
         }
         .opponent {
-            background-color: blue;
-            bottom: 5px;
+        bottom: 10px;
         }
         .finish-line {
             position: absolute;
             right: 10px;
             top: 0;
             bottom: 0;
-            width: 5px;
+        width: 10px;
             background-image: repeating-linear-gradient(white 0 10px, black 10px 20px);
+        transform: translateZ(1px); /* Keep above track surface */
         }
         .info-display {
             margin-top: 20px;
@@ -127,6 +131,25 @@
             font-size: 16px;
             z-index: 10; /* Ensure it's above other elements */
         }
+        .new-record-msg {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px #FFD700;
+            z-index: 100;
+            display: none;
+            pointer-events: none;
+        }
+        @keyframes popupFade {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -139,11 +162,12 @@
             <option value="medium" selected>Medium</option>
             <option value="hard">Hard</option>
         </select>
+        <div id="bestTimeDisplay" style="margin-left: 20px; font-weight: bold; color: #ffd700;">Best Time: --</div>
     </div>
     <div class="game-container">
         <div class="track">
-            <div id="player" class="player"></div>
-            <div id="opponent" class="opponent"></div>
+            <div id="player" class="player">🏃‍♂️</div>
+            <div id="opponent" class="opponent">🤖</div>
             <div class="finish-line"></div>
         </div>
     </div>
@@ -154,6 +178,7 @@
         <button id="tapButton1" class="tap-button">A</button>
         <button id="tapButton2" class="tap-button">L</button>
    </div>
+    <div id="newRecordMsg" class="new-record-msg">New Record! 🎉</div>
     <style>
         #startButton {
             font-size: 2em; /* साइज़ को बड़ा कर दिया */

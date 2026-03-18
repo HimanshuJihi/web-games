@@ -255,13 +255,13 @@ function draw() {
     ctx.fillRect(0, GROUND_Y, FOUL_LINE_X, canvas.height - GROUND_Y);
 
     // Add track spots (Black, Red, White) for sense of speed
-    for (let i = 0; i < FOUL_LINE_X; i += 40) {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'; // White
-        ctx.fillRect(i, GROUND_Y + 15, 12, 4);
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'; // Black
-        ctx.fillRect(i + 15, GROUND_Y + 45, 12, 4);
-        ctx.fillStyle = 'rgba(255, 0, 0, 0.6)'; // Red
-        ctx.fillRect(i + 30, GROUND_Y + 75, 12, 4);
+    for (let i = 0; i < FOUL_LINE_X; i += 60) {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; // White
+        ctx.fillRect(i, GROUND_Y + 15, 20, 6);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; // Black
+        ctx.fillRect(i + 20, GROUND_Y + 45, 20, 6);
+        ctx.fillStyle = 'rgba(200, 0, 0, 0.8)'; // Red
+        ctx.fillRect(i + 40, GROUND_Y + 75, 20, 6);
     }
 
     // Draw Sandpit

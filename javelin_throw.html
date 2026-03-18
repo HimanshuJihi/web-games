@@ -39,6 +39,14 @@
 
         #throwBtn { width: 160px; border-radius: 15px; background-color: #E91E63; }
 
+        #restartButton {
+            margin-top: 20px; padding: 10px 30px; font-size: 20px; font-weight: bold;
+            border-radius: 10px; background-color: #4CAF50; color: white;
+            border: 3px solid white; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            display: none; z-index: 10;
+        }
+        #restartButton:active { transform: scale(0.95); }
+
         .exit-button {
             position: absolute; top: 15px; left: 15px; padding: 10px 20px;
             background-color: #f44336; color: white; text-decoration: none;
@@ -103,7 +111,7 @@
     <h1>Javelin Throw</h1>
     
     <div class="info-panel">
-        <div id="statusDisplay">Distance: 0.00m</div>
+        <div id="statusDisplay">Player: --m | AI: --m</div>
         <div id="bestScoreDisplay" style="color: #FFD700;">Best: --m</div>
     </div>
 
@@ -117,6 +125,8 @@
         <button id="throwBtn" class="tap-btn">HOLD TO AIM<br>& RELEASE</button>
     </div>
 
+    <button id="restartButton">Play Again</button>
+
     <div id="newRecordMsg" class="new-record-msg">New Record! 🎉</div>
 
     <!-- Instructions Screen -->
@@ -127,6 +137,7 @@
             2. Watch the red <b>Foul Line</b>.<br><br>
             3. <b>PRESS AND HOLD</b> the Aim button to set your angle. Aim for 45°!<br><br>
             4. <b>RELEASE</b> the button before the red line to throw the Javelin.<br><br>
+            🤖 <b>Opponent:</b> A Red-clothed AI will throw after you.<br><br>
             ⚠️ Crossing the red line while holding the Javelin is a FOUL!
         </p>
         <button id="startBtn">Start Event</button>

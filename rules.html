@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Play - Mlampic Games</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .content-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            margin-top: 60px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            line-height: 1.6;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-top: 0;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 20px;
+        }
+        h3 { color: #FFD700; margin-top: 30px; display: flex; align-items: center; gap: 10px; }
+        p { font-size: 1.05rem; color: #d1d8e0; margin-top: 5px; }
+        .exit-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .exit-button:hover { background-color: rgba(255, 255, 255, 0.4); }
+        
+        .lang-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .lang-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .lang-btn.active {
+            background: white;
+            color: #1e3c72;
+        }
+        .hindi-content { display: none; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="exit-button">← Back</a>
+    
+    <div class="content-box">
+        <h1>🎮 How to Play / नियम</h1>
+        
+        <div class="lang-toggle">
+            <button class="lang-btn active" onclick="setLang('en')">English</button>
+            <button class="lang-btn" onclick="setLang('hi')">हिन्दी (Hindi)</button>
+        </div>
+
+        <!-- ENGLISH CONTENT -->
+        <div id="content-en" class="english-content">
+            <h3>🥌 Curling</h3>
+            <p>Drag backwards and release to slide the stone towards the center target (House). Hold the <b>"Sweep"</b> button while the stone is moving to make it slide further.</p>
+            
+            <h3>🏃‍♂️ 100m Sprint</h3>
+            <p>Tap the <b>'A'</b> and <b>'L'</b> keys (or screen buttons) alternately and as fast as possible to run. Beating the computer sets a new Best Time!</p>
+            
+            <h3>🏀 Basketball</h3>
+            <p>Swipe up towards the hoop to shoot the ball. As you progress, the hoop will start moving. You have a limited time (Shot Clock) for each throw.</p>
+            
+            <h3>🎯 Target Practice</h3>
+            <p>Click or tap on the colored targets quickly before the 30-second timer runs out. Meet the required score to unlock the next level.</p>
+            
+            <h3>🏹 Archery</h3>
+            <p>Drag backwards to pull the bowstring, aim, and release to shoot. Try to hit the yellow center (Bullseye) for 10 points. Different arrows (Heavy/Light) have different physics.</p>
+            
+            <h3>🔫 Skeet Shooting</h3>
+            <p>Tap the flying clay pigeons to shoot them before they fall out of the screen. You have limited ammo, so make every shot count!</p>
+            
+            <h3>🏊‍♂️ Swimming</h3>
+            <p>Tap the Left and Right stroke buttons alternately to swim forward. Tapping the same button twice in a row will not work. Beat the sea creatures to win.</p>
+            
+            <h3>🏃‍♂️💨 Long Jump</h3>
+            <p>Tap rapidly to build up speed, then press <b>JUMP</b> right before the red foul line. Jump from the yellow zone for a 'Perfect Jump' boost. Crossing the red line is a foul!</p>
+
+            <h3>🤺 Javelin Throw</h3>
+            <p>Tap rapidly to run. Press and hold the <b>AIM & THROW</b> button to set your angle (aim for 45°), then release before the foul line to throw the javelin!</p>
+        </div>
+
+        <!-- HINDI CONTENT -->
+        <div id="content-hi" class="hindi-content">
+            <h3>🥌 कर्लिंग (Curling)</h3>
+            <p>पत्थर को पीछे की ओर खींचकर छोड़ें ताकि वह बीच के लक्ष्य (हाउस) की ओर जाए। जब पत्थर फिसल रहा हो, तो उसे और दूर तक भेजने के लिए <b>"Sweep"</b> बटन को दबाकर रखें।</p>
+            
+            <h3>🏃‍♂️ 100m स्प्रिंट (Sprint)</h3>
+            <p>दौड़ने के लिए <b>'A'</b> और <b>'L'</b> बटन (या स्क्रीन बटन) को बारी-बारी से और जितनी जल्दी हो सके टैप करें। नया रिकॉर्ड बनाने के लिए कंप्यूटर को हराएं!</p>
+            
+            <h3>🏀 बास्केटबॉल (Basketball)</h3>
+            <p>गेंद को फेंकने के लिए हूप (जाली) की ओर ऊपर की तरफ स्वाइप करें। अगले लेवल में हूप हिलने लगेगा। हर शॉट के लिए आपके पास सीमित समय होता है।</p>
+            
+            <h3>🎯 टारगेट प्रैक्टिस (Target Practice)</h3>
+            <p>30 सेकंड का समय समाप्त होने से पहले स्क्रीन पर आने वाले रंगीन लक्ष्यों (Targets) पर जल्दी से क्लिक या टैप करें।</p>
+            
+            <h3>🏹 तीरंदाजी (Archery)</h3>
+            <p>धनुष खींचने के लिए पीछे की ओर ड्रैग करें, निशाना लगाएं और छोड़ें। पीले रंग (बुलआई) पर निशाना लगाने से अधिकतम अंक मिलेंगे। भारी और हल्के तीरों की स्पीड अलग होती है।</p>
+            
+            <h3>🔫 स्कीट शूटिंग (Skeet Shooting)</h3>
+            <p>उड़ने वाले क्ले पिजन (लक्ष्यों) को स्क्रीन से नीचे गिरने से पहले टैप करके शूट करें। गोलियां सीमित हैं, इसलिए सही निशाना लगाएं!</p>
+            
+            <h3>🏊‍♂️ तैराकी (Swimming)</h3>
+            <p>तैरने के लिए लेफ्ट और राइट स्ट्रोक बटन को बारी-बारी से दबाएं। एक ही बटन को दो बार लगातार दबाने से खिलाड़ी आगे नहीं बढ़ेगा।</p>
+            
+            <h3>🏃‍♂️💨 लंबी कूद (Long Jump)</h3>
+            <p>स्पीड बढ़ाने के लिए तेज़ी से टैप करें, और लाल फ़ाउल लाइन से ठीक पहले <b>JUMP</b> बटन दबाएं। पीले हिस्से से कूदने पर 'परफेक्ट जंप' मिलेगी। लाल लाइन के पार पैर रखना फ़ाउल है!</p>
+
+            <h3>🤺 भाला फेंक (Javelin Throw)</h3>
+            <p>दौड़ने के लिए तेज़ी से टैप करें। एंगल सेट करने के लिए <b>AIM & THROW</b> बटन को दबाकर रखें (45° का लक्ष्य रखें), और थ्रो करने के लिए फ़ाउल लाइन से पहले छोड़ दें!</p>
+        </div>
+    </div>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('content-en').style.display = lang === 'en' ? 'block' : 'none';
+            document.getElementById('content-hi').style.display = lang === 'hi' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

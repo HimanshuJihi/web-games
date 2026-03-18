@@ -60,6 +60,69 @@ let countdownInterval = null;
 let lastHitArrowState = null; // To store arrow state at impact
 let hitMarks = [];
 
+// --- Audio Setup (Web Audio API) ---
+let audioCtx = null;
+let bgmStarted = false;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    startBackgroundMusic();
+}
+
+function startBackgroundMusic() {
+    if (bgmStarted || !audioCtx) return;
+    if (localStorage.getItem('bgmEnabled') === 'false') return; // Check user settings
+    
+    bgmStarted = true;
+    const freqs = [196, 261.63, 329.63]; // C Major Drone (शांत बैकग्राउंड म्यूज़िक)
+    freqs.forEach(freq => {
+        const osc = audioCtx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        const gain = audioCtx.createGain();
+        gain.gain.value = 0.02; // बहुत ही धीमी आवाज़
+        const lfo = audioCtx.createOscillator();
+        lfo.type = 'sine';
+        lfo.frequency.value = 0.1 + Math.random() * 0.1; // आवाज़ को धीमे-धीमे ऊपर-नीचे करने के लिए
+        const lfoGain = audioCtx.createGain();
+        lfoGain.gain.value = 0.01;
+        lfo.connect(lfoGain).connect(gain.gain);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start();
+        lfo.start();
+    });
+}
+
+function playShootSound() {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.1);
+}
+
+function playHitSound() {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.1);
+}
 
 let arrow = {};
 let target = {};
@@ -374,6 +437,7 @@ function update() {
         
         score += points;
         scoreEl.textContent = score;
+        playHitSound(); // हिट साउंड प्ले करें
 
         // Wait a moment to show the hit before starting the next shot
         setTimeout(() => nextShot(), 500); // 500ms delay
@@ -447,6 +511,7 @@ function getEventPosition(e) {
 
 function handleDragStart(e) {
     if (gameState !== 'aiming') return;
+    initAudio(); // स्टार्ट ऑडियो
     isDragging = true;
     dragStart = getEventPosition(e);
 }
@@ -465,10 +530,12 @@ function handleDragEnd() {
     arrow.velocityX = -dragPower.x * arrow.properties.powerFactor;
     arrow.velocityY = -dragPower.y * arrow.properties.powerFactor;
     dragPower = { x: 0, y: 0 };
+    playShootSound(); // शूट साउंड
 }
 
 // Event Listeners
 gameControlButton.addEventListener('click', () => {
+    initAudio(); // स्टार्ट ऑडियो
     switch (gameState) {
         case 'menu':
             runCountdown();

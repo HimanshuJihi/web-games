@@ -10,6 +10,77 @@ const startButton = document.getElementById('startButton');
 const bestTimeDisplay = document.getElementById('bestTimeDisplay');
 const newRecordMsg = document.getElementById('newRecordMsg');
 
+// --- Audio Setup (Web Audio API) ---
+let audioCtx = null;
+let bgmStarted = false;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    startBackgroundMusic();
+}
+
+function startBackgroundMusic() {
+    if (bgmStarted || !audioCtx) return;
+    if (localStorage.getItem('bgmEnabled') === 'false') return; // Check user settings
+    
+    bgmStarted = true;
+    const freqs = [196, 261.63, 329.63]; // C Major Drone (शांत बैकग्राउंड म्यूज़िक)
+    freqs.forEach(freq => {
+        const osc = audioCtx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        const gain = audioCtx.createGain();
+        gain.gain.value = 0.02; // बहुत ही धीमी आवाज़
+        const lfo = audioCtx.createOscillator();
+        lfo.type = 'sine';
+        lfo.frequency.value = 0.1 + Math.random() * 0.1; // लहरों जैसा इफ़ेक्ट (LFO)
+        const lfoGain = audioCtx.createGain();
+        lfoGain.gain.value = 0.01;
+        lfo.connect(lfoGain).connect(gain.gain);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start();
+        lfo.start();
+    });
+}
+
+function playStepSound() {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.1);
+}
+
+function playCheerSound() {
+    if (!audioCtx) return;
+    const bufferSize = audioCtx.sampleRate * 2.5; // 2.5 सेकंड का साउंड
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.8; 
+    }
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buffer;
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 1000; // तालियों और आवाज़ की फ़्रीक्वेंसी
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + 0.5); // आवाज़ का बढ़ना (Swell)
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2.5); // आवाज़ का धीमा होना
+    noise.connect(filter).connect(gain).connect(audioCtx.destination);
+    noise.start();
+}
+
 // Game State
 let gameState = 'idle'; // 'idle', 'countdown', 'running', 'finished'
 let playerPosition = 0; // प्रतिशत में
@@ -120,12 +191,14 @@ function update() {
         if (playerFinished && !opponentFinished) {
             infoDisplay.textContent = `You won! Time: ${finalTime.toFixed(2)} seconds`;
             checkAndSaveBestTime(finalTime);
+            playCheerSound(); // ताली बजाने की आवाज़
         } else if (!playerFinished && opponentFinished) {
             infoDisplay.textContent = `Computer won!`;
         } else { // Tie-break
             if (playerPosition > opponentPosition) {
                 infoDisplay.textContent = `You won! Time: ${finalTime.toFixed(2)} seconds`;
                 checkAndSaveBestTime(finalTime);
+                playCheerSound(); // ताली बजाने की आवाज़
             } else {
                 infoDisplay.textContent = `Computer won!`;
             }
@@ -186,6 +259,8 @@ function updateBestTimeDisplay() {
 function handleStartClick() {
     startButton.style.display = 'none';
     difficultySelect.style.display = 'none';
+
+    initAudio(); // गेम शुरू होने पर ऑडियो इंजन चालू करें
 
     // कठिनाई स्तर सेट करें
     const difficulty = difficultySelect.value;

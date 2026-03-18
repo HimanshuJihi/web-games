@@ -11,6 +11,49 @@ const DESIGN_WIDTH = 1280;
 let scale = 1;
 const GRAVITY = 0.15;
 
+// --- Audio Setup (Web Audio API) ---
+let audioCtx = null;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playGunshotSound() {
+    if (!audioCtx) return;
+
+    // 1. Noise part (The crack of the gunshot)
+    const bufferSize = audioCtx.sampleRate * 0.3; // 0.3 seconds
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+    
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buffer;
+    const noiseFilter = audioCtx.createBiquadFilter();
+    noiseFilter.type = 'lowpass';
+    noiseFilter.frequency.value = 2000;
+    const noiseGain = audioCtx.createGain();
+    noiseGain.gain.setValueAtTime(1, audioCtx.currentTime);
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+    noise.connect(noiseFilter).connect(noiseGain).connect(audioCtx.destination);
+    noise.start();
+
+    // 2. Oscillator part (The low thump of the blast)
+    const osc = audioCtx.createOscillator();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+    const oscGain = audioCtx.createGain();
+    oscGain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+    oscGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+    osc.connect(oscGain).connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.2);
+}
+
 let gameState = 'menu'; // 'menu', 'playing', 'round_complete', 'round_failed', 'game_complete'
 let score = 0;
 
@@ -225,6 +268,8 @@ function handleShoot(e) {
     ammo--;
     ammoEl.textContent = ammo;
 
+    playGunshotSound(); // गनशॉट की आवाज़ प्ले करें
+
     const rect = canvas.getBoundingClientRect();
     let clientX = e.touches ? e.touches[0].clientX : e.clientX;
     let clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -252,6 +297,7 @@ function handleShoot(e) {
 
 // Events
 gameControlButton.addEventListener('click', () => {
+    initAudio(); // बटन क्लिक पर ऑडियो इंजन चालू करें
     if (gameState === 'game_complete') {
         score = 0;
         currentRound = 1;

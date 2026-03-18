@@ -50,6 +50,27 @@ function playSplashSound() {
     noise.start();
 }
 
+function playCheerSound() {
+    if (!audioCtx) return;
+    const bufferSize = audioCtx.sampleRate * 2.5; // 2.5 सेकंड का साउंड
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.8; 
+    }
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buffer;
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 1000; // तालियों और आवाज़ की फ़्रीक्वेंसी
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + 0.5); // आवाज़ का बढ़ना (Swell)
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2.5); // आवाज़ का धीमा होना
+    noise.connect(filter).connect(gain).connect(audioCtx.destination);
+    noise.start();
+}
+
 // Game State
 let gameState = 'idle'; // 'idle', 'countdown', 'running', 'finished'
 let playerPosition = 0; // percentage
@@ -183,6 +204,7 @@ function update() {
         if (winner === 'Player') {
             infoDisplay.textContent = `You won! Time: ${finalTime.toFixed(2)}s`;
             checkAndSaveBestTime(finalTime);
+            playCheerSound(); // ताली बजाने की आवाज़
         } else {
             infoDisplay.textContent = `${winner} won! Better luck next time.`;
         }

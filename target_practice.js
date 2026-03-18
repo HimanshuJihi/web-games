@@ -42,6 +42,49 @@ if (isNaN(currentLevelIndex) || currentLevelIndex >= LEVELS.length || currentLev
 let gameState = 'menu'; // 'menu', 'countdown', 'playing', 'level_failed', 'level_complete', 'game_complete'
 let countdownValue = 3;
 
+// --- Audio Setup (Web Audio API) ---
+let audioCtx = null;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playGunshotSound() {
+    if (!audioCtx) return;
+
+    // 1. Noise part (The crack of the gunshot)
+    const bufferSize = audioCtx.sampleRate * 0.3; // 0.3 seconds
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+    
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buffer;
+    const noiseFilter = audioCtx.createBiquadFilter();
+    noiseFilter.type = 'lowpass';
+    noiseFilter.frequency.value = 2000;
+    const noiseGain = audioCtx.createGain();
+    noiseGain.gain.setValueAtTime(1, audioCtx.currentTime);
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+    noise.connect(noiseFilter).connect(noiseGain).connect(audioCtx.destination);
+    noise.start();
+
+    // 2. Oscillator part (The low thump of the blast)
+    const osc = audioCtx.createOscillator();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+    const oscGain = audioCtx.createGain();
+    oscGain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+    oscGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+    osc.connect(oscGain).connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.2);
+}
+
 // --- Drawing Functions ---
 function drawTarget(target) {
     ctx.beginPath();
@@ -235,6 +278,8 @@ function getEventPosition(e) {
 function handleClick(e) {
     if (gameState !== 'playing') return;
 
+    playGunshotSound(); // गनशॉट की आवाज़ प्ले करें
+
     const { x, y } = getEventPosition(e);
 
     for (let i = targets.length - 1; i >= 0; i--) {
@@ -256,6 +301,7 @@ function handleClick(e) {
 
 // Event Listeners
 gameControlButton.addEventListener('click', () => {
+    initAudio(); // बटन क्लिक पर ऑडियो इंजन चालू करें
     switch (gameState) {
         case 'menu':
             runCountdown();

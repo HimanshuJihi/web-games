@@ -50,10 +50,40 @@
             font-size: 16px;
             z-index: 10;
         }
+
+        /* Orientation Warning Overlay */
+        #orientation-warning {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #4CAF50; color: white; z-index: 9999;
+            flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; font-size: 22px; padding: 20px; box-sizing: border-box;
+        }
+        .rotate-icon { font-size: 60px; margin-bottom: 20px; animation: rotateIcon 2s infinite ease-in-out; }
+        @keyframes rotateIcon { 0% { transform: rotate(0deg); } 50% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
+        @media screen and (max-width: 899px) and (orientation: portrait) {
+            #orientation-warning { display: flex; }
+        }
+        .warning-exit {
+            margin-top: 20px; padding: 10px 20px; background-color: #f44336;
+            color: white; text-decoration: none; border-radius: 8px; font-size: 18px;
+        }
+        @media screen and (max-width: 899px) and (orientation: landscape) {
+            h1 { font-size: 18px; margin: 5px 0; }
+            #gameCanvas { max-height: 70vh; max-width: 90vw; }
+            .info { font-size: 16px; margin-top: 5px; }
+            .exit-button { padding: 5px 10px; font-size: 12px; top: 5px; left: 5px; }
+            #gameControlButton { margin-top: 5px !important; padding: 5px 15px !important; font-size: 14px !important; }
+        }
     </style>
 </head>
 <body>
-    <a href="../index.html" class="exit-button">Back to Menu</a>
+    <div id="orientation-warning">
+        <div class="rotate-icon">📱</div>
+        <p>Please rotate your phone sideways (Landscape mode) to play Target Practice.</p>
+        <a href="index.html" class="warning-exit">Back to Menu</a>
+    </div>
+
+    <a href="index.html" class="exit-button">Back to Menu</a>
     <h1>Target Practice</h1>
     <canvas id="gameCanvas"></canvas>
     <div class="info">Score: <span id="score">0</span> / <span id="target-score">0</span> | Time: <span id="time-left">30</span>s</div>

@@ -51,9 +51,38 @@
             font-size: 16px;
             z-index: 10; /* Ensure it's above other elements */
         }
+
+        /* Orientation Warning Overlay */
+        #orientation-warning {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #13ccff; color: white; z-index: 9999;
+            flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; font-size: 22px; padding: 20px; box-sizing: border-box;
+        }
+        .rotate-icon { font-size: 60px; margin-bottom: 20px; animation: rotateIcon 2s infinite ease-in-out; }
+        @keyframes rotateIcon { 0% { transform: rotate(0deg); } 50% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
+        @media screen and (max-width: 899px) and (orientation: portrait) {
+            #orientation-warning { display: flex; }
+        }
+        .warning-exit {
+            margin-top: 20px; padding: 10px 20px; background-color: #f44336;
+            color: white; text-decoration: none; border-radius: 8px; font-size: 18px;
+        }
+        @media screen and (max-width: 899px) and (orientation: landscape) {
+            p { font-size: 12px; margin-top: 5px; }
+            .settings { margin-bottom: 5px; }
+            canvas { max-height: 70vh; max-width: 45vw; }
+            .exit-button { padding: 5px 10px; font-size: 12px; top: 5px; left: 5px; }
+        }
     </style>
 </head>
 <body>
+    <div id="orientation-warning">
+        <div class="rotate-icon">📱</div>
+        <p>Please rotate your phone sideways (Landscape mode) to play Curling.</p>
+        <a href="index.html" class="warning-exit">Back to Menu</a>
+    </div>
+
     <a href="index.html" class="exit-button">Back to Menu</a>
         <p style="font-size: 12px; max-width: 400px; text-align: center;"><b>Scoring Rule:</b> At the end of a round, only the team with the stone closest to the center scores. That team gets 1 point for every stone that is closer to the center than the opponent's closest stone.</p>
 

@@ -40,6 +40,58 @@ let dragStart = { x: 0, y: 0 };
 let shotClockTime = SHOT_CLOCK_DURATION;
 let shotClockInterval = null;
 
+// --- Audio Setup (Web Audio API) ---
+let audioCtx = null;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playShootSound() {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.2);
+}
+
+function playBounceSound() {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.1);
+}
+
+function playScoreSound() {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+    osc.frequency.setValueAtTime(600, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.3);
+}
+
 // Ball properties
 let ball = {
     x: 0,
@@ -222,6 +274,7 @@ function update() {
             ball.velocityY > 0) {
             currentScore++;
             scoreEl.textContent = currentScore;
+            playScoreSound(); // स्कोर होने की आवाज़
             resetBall();
             checkChallengeStatus();
             return;
@@ -230,11 +283,13 @@ function update() {
         // Check for wall bounce
         if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
             ball.velocityX *= -BOUNCE_FACTOR;
+            playBounceSound(); // दीवार से टकराने की आवाज़
         }
         
         // Check for backboard bounce
         if (ball.x + ball.radius > backboard.x && ball.y > backboard.y && ball.y < backboard.y + backboard.height) {
             ball.velocityX *= -BOUNCE_FACTOR;
+            playBounceSound(); // बैकबोर्ड से टकराने की आवाज़
         }
 
         // Reset if ball goes off screen
@@ -306,6 +361,7 @@ function getEventPosition(e) {
 function handleDragStart(e) {
     if (ball.isShooting || gameState !== 'playing') return;
     isDragging = true;
+    initAudio(); // जब खिलाड़ी पहली बार स्क्रीन छुए तब ऑडियो चालू करें
     dragStart = getEventPosition(e);
 }
 
@@ -323,6 +379,7 @@ function handleDragEnd(e) {
     ball.velocityX = swipeX * 0.1;
     ball.velocityY = swipeY * 0.1;
     ball.isShooting = true;
+    playShootSound(); // बॉल फेंकने की आवाज़
 
     stopShotClock();
     // A shot is taken

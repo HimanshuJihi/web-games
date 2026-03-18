@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Long Jump</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #87CEEB; /* Sky Blue */
+            font-family: sans-serif;
+            margin: 0;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        h1 { color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin: 10px 0; }
+        
+        .game-wrapper {
+            background: #4CAF50; /* Grass color */
+            padding: 10px;
+            border-radius: 10px;
+            border: 4px solid #388E3C;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        #gameCanvas {
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            max-width: 95vw;
+            max-height: 50vh;
+            aspect-ratio: 2 / 1;
+            display: block;
+        }
+
+        .info-panel {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 15px;
+            font-size: 22px;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .tap-btn {
+            width: 80px;
+            height: 80px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 50%;
+            border: 4px solid white;
+            background-color: #FF9800;
+            color: white;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .tap-btn:active { transform: scale(0.95); }
+
+        #jumpBtn {
+            width: 120px;
+            border-radius: 15px;
+            background-color: #F44336;
+        }
+
+        .exit-button {
+            position: absolute;
+            top: 15px; left: 15px;
+            padding: 10px 20px;
+            background-color: #f44336; color: white;
+            text-decoration: none; border-radius: 8px; font-size: 16px;
+            z-index: 10;
+        }
+
+        .new-record-msg {
+            position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 48px; font-weight: bold; color: #FFD700;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px #FFD700;
+            z-index: 100; display: none; pointer-events: none;
+        }
+
+        #startScreen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 50; color: white; text-align: center;
+        }
+        #startScreen p { font-size: 1.2rem; max-width: 600px; line-height: 1.5; padding: 20px; }
+        #startBtn {
+            padding: 15px 40px; font-size: 24px; border-radius: 10px;
+            background: #4CAF50; color: white; border: 2px solid white; cursor: pointer;
+        }
+
+        @media screen and (max-width: 768px) {
+            .tap-btn { width: 60px; height: 60px; font-size: 18px; }
+            #jumpBtn { width: 100px; height: 60px; }
+            .info-panel { font-size: 16px; flex-direction: column; align-items: center; gap: 5px; }
+        }
+
+        /* Orientation Warning Overlay */
+        #orientation-warning {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #4CAF50; /* Match theme */
+            color: white; z-index: 9999;
+            flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; font-size: 22px; padding: 20px; box-sizing: border-box;
+        }
+        .rotate-icon { font-size: 60px; margin-bottom: 20px; animation: rotateIcon 2s infinite ease-in-out; }
+        @keyframes rotateIcon { 0% { transform: rotate(0deg); } 50% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
+        
+        @media screen and (max-width: 899px) and (orientation: portrait) {
+            #orientation-warning { display: flex; }
+        }
+
+        /* Mobile Landscape Adjustments */
+        @media screen and (max-width: 899px) and (orientation: landscape) {
+            h1 { font-size: 18px; margin: 2px 0; }
+            .info-panel { font-size: 14px; margin-top: 5px; flex-direction: row; }
+            .tap-btn { width: 50px; height: 50px; font-size: 16px; border: 2px solid white; }
+            #jumpBtn { width: 90px; height: 50px; font-size: 14px; }
+            .controls { margin-top: 10px; gap: 10px; }
+            #gameCanvas { max-height: 60vh; }
+            .exit-button { padding: 5px 10px; font-size: 12px; top: 5px; left: 5px; }
+            #startScreen p { font-size: 0.9rem; padding: 10px; margin: 5px; }
+            #startBtn { padding: 10px 20px; font-size: 18px; }
+        }
+        
+        .warning-exit {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Orientation Warning -->
+    <div id="orientation-warning">
+        <div class="rotate-icon">📱</div>
+        <p>Please rotate your phone sideways (Landscape mode) to play Long Jump.</p>
+        <a href="index.html" class="warning-exit">Back to Menu</a>
+    </div>
+
+    <a href="index.html" class="exit-button">Back to Menu</a>
+    <h1>Long Jump</h1>
+    
+    <div class="info-panel">
+        <div id="statusDisplay">Player: --m | AI: --m</div>
+        <div id="bestScoreDisplay" style="color: #FFD700;">Best: --m</div>
+    </div>
+
+    <div class="game-wrapper">
+        <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <div class="controls">
+        <button id="leftBtn" class="tap-btn">A</button>
+        <button id="rightBtn" class="tap-btn">L</button>
+        <button id="jumpBtn" class="tap-btn">JUMP (Space)</button>
+    </div>
+
+    <div id="newRecordMsg" class="new-record-msg">New Record! 🎉</div>
+
+    <!-- Instructions Screen -->
+    <div id="startScreen">
+        <h2 style="font-size: 3rem; margin:0; color:#FFD700;">How to Play</h2>
+        <p>
+            1. Tap <b>A</b> and <b>L</b> (or the orange buttons) rapidly to build speed.<br><br>
+            2. Watch the red <b>Foul Line</b> on the track.<br><br>
+            3. Press <b>JUMP</b> (or Spacebar) right before the foul line.<br><br>
+            ⭐ <b>Tip:</b> Jump from the yellow zone for a <b>PERFECT JUMP</b> boost!<br><br>
+            🤖 <b>Opponent:</b> The AI will jump after you. Try to set a hard target!<br><br>
+            ⚠️ If you cross the red line before jumping, it's a FOUL!
+        </p>
+        <button id="startBtn">Start Event</button>
+    </div>
+
+    <script src="long_jump.js"></script>
+</body>
+</html>

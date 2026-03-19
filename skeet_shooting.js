@@ -9,7 +9,7 @@ const gameControlButton = document.getElementById('gameControlButton');
 
 const DESIGN_WIDTH = 1280;
 let scale = 1;
-const GRAVITY = 0.15;
+const GRAVITY = 0.4; // ग्रेविटी बढ़ाई गई ताकि टारगेट्स स्क्रीन के बाहर न जाएँ
 
 // --- Audio Setup (Web Audio API) ---
 let audioCtx = null;
@@ -54,8 +54,21 @@ function playGunshotSound() {
     osc.stop(audioCtx.currentTime + 0.2);
 }
 
-let gameState = 'menu'; // 'menu', 'playing', 'round_complete', 'round_failed', 'game_complete'
+let gameState = 'menu'; // 'menu', 'countdown', 'playing', 'round_complete', 'round_failed', 'game_complete'
 let score = 0;
+let countdownValue = 3;
+let countdownInterval = null;
+
+const TOTAL_ROUNDS = 5;
+
+// Difficulty configurations for each round
+const ROUND_CONFIG = [
+    { count: 3, delay: 100, speed: 1.0, ammo: 5, targetScore: 20 }, // 2 hits required
+    { count: 5, delay: 80, speed: 1.2, ammo: 7, targetScore: 30 }, // 3 hits required
+    { count: 8, delay: 60, speed: 1.4, ammo: 10, targetScore: 50 }, // 5 hits required
+    { count: 12, delay: 45, speed: 1.6, ammo: 15, targetScore: 80 }, // 8 hits required
+    { count: 15, delay: 35, speed: 1.8, ammo: 18, targetScore: 100 } // 10 hits required
+];
 
 // Auto-load saved round from browser's localStorage
 let savedRound = localStorage.getItem('skeetSavedRound');
@@ -68,22 +81,14 @@ let pigeons = [];
 let particles = [];
 let pigeonsToSpawn = 0;
 let spawnTimer = 0;
-const TOTAL_ROUNDS = 5;
-
-// Difficulty configurations for each round
-const ROUND_CONFIG = [
-    { count: 3, delay: 100, speed: 1.0, ammo: 5, targetScore: 20 }, // 2 hits required
-    { count: 5, delay: 80, speed: 1.2, ammo: 7, targetScore: 30 }, // 3 hits required
-    { count: 8, delay: 60, speed: 1.4, ammo: 10, targetScore: 50 }, // 5 hits required
-    { count: 12, delay: 45, speed: 1.6, ammo: 15, targetScore: 80 }, // 8 hits required
-    { count: 15, delay: 35, speed: 1.8, ammo: 18, targetScore: 100 } // 10 hits required
-];
 
 function resizeCanvas() {
     const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = rect.height;
+    // Fallback if rect is 0 (before layout is painted)
+    canvas.width = rect.width || window.innerWidth * 0.95;
+    canvas.height = rect.height || (canvas.width * 9/16);
     scale = canvas.width / DESIGN_WIDTH;
+    if (scale <= 0) scale = 1;
 }
 
 function spawnPigeon() {
@@ -94,8 +99,9 @@ function spawnPigeon() {
     const startX = direction === 1 ? -50 * scale : canvas.width + 50 * scale;
     const startY = canvas.height * 0.6 + (Math.random() * 50 * scale);
     
-    const vx = (Math.random() * 5 + 6) * scale * direction * config.speed;
-    const vy = -(Math.random() * 5 + 12) * scale * config.speed;
+    // स्पीड को एकदम असली आर्क (Arc) जैसा बनाया गया
+    const vx = (Math.random() * 6 + 12) * scale * direction * config.speed;
+    const vy = -(Math.random() * 5 + 14) * scale * config.speed;
     
     pigeons.push({
         x: startX,
@@ -200,7 +206,14 @@ function draw() {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    if (gameState === 'round_complete') {
+    if (gameState === 'countdown') {
+        ctx.font = `bold ${100 * scale}px sans-serif`;
+        ctx.fillStyle = '#FFD700'; // Gold Color
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+        ctx.shadowBlur = 10 * scale;
+        ctx.fillText(countdownValue, canvas.width / 2, canvas.height / 2);
+        ctx.shadowBlur = 0; // Reset shadow
+    } else if (gameState === 'round_complete') {
         ctx.font = `bold ${50 * scale}px sans-serif`;
         ctx.fillText(`Round ${currentRound} Complete!`, canvas.width / 2, canvas.height / 2 - 30 * scale);
     } else if (gameState === 'round_failed') {
@@ -222,11 +235,11 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
-function startRound() {
+function setupRound() {
     const config = ROUND_CONFIG[currentRound - 1];
     pigeonsToSpawn = config.count;
     ammo = config.ammo;
-    spawnTimer = config.delay;
+    spawnTimer = 15; // पहला टारगेट बटन दबाते ही तुरंत (15 फ्रेम में) निकलेगा
     score = 0; // Reset score for the new challenge level
     
     // Auto-save current progress
@@ -239,8 +252,21 @@ function startRound() {
     ammoEl.textContent = ammo;
     roundEl.textContent = currentRound;
     
-    gameState = 'playing';
     gameControlButton.style.display = 'none';
+    runCountdown();
+}
+
+function runCountdown() {
+    gameState = 'countdown';
+    countdownValue = 3;
+    
+    countdownInterval = setInterval(() => {
+        countdownValue--;
+        if (countdownValue <= 0) {
+            clearInterval(countdownInterval);
+            gameState = 'playing';
+        }
+    }, 1000);
 }
 
 function endRound() {
@@ -302,14 +328,14 @@ gameControlButton.addEventListener('click', () => {
         score = 0;
         currentRound = 1;
         scoreEl.textContent = score;
-        startRound();
+        setupRound();
     } else if (gameState === 'round_complete') {
         currentRound++;
-        startRound();
+        setupRound();
     } else if (gameState === 'round_failed') {
-        startRound();
+        setupRound();
     } else if (gameState === 'menu') {
-        startRound();
+        setupRound();
     }
 });
 

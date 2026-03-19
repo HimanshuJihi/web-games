@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mlampic-cache-v3';
+const CACHE_NAME = 'mlampic-cache-v8';
 
 // उन सभी फ़ाइलों की लिस्ट जिन्हें ऑफलाइन खेलने के लिए सेव करना है
 const urlsToCache = [
@@ -26,7 +26,16 @@ const urlsToCache = [
     './target_practice.js',
     './javelin_throw.html',
     './javelin_throw.js',
-    './manifest.json'
+    './manifest.json',
+    './Mlampic_L.png',
+    './Mlampic_d.png',
+    './Mlampic_p.png',
+    './favicon.ico',
+    './favicon-32x32.png',
+    './favicon-16x16.png',
+    './apple-touch-icon.png',
+    './android-chrome-192x192.png',
+    './android-chrome-512x512.png'
 ];
 
 // इंस्टॉल होने पर फ़ाइलों को कैश (Cache) में सेव करें

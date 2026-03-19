@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mlampic Games</title>
     
+    <!-- Favicon Setup -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" href="favicon.ico">
+    
     <!-- PWA Setup -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e3c72">
@@ -14,7 +20,11 @@
         body {
             font-family: 'Poppins', sans-serif;
             text-align: center;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background-color: #1e3c72;
+            background-image: url('Mlampic_d.png');
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
             color: white;
             display: flex;
             flex-direction: column;
@@ -80,6 +90,9 @@
             letter-spacing: 1px;
         }
         @media (max-width: 600px) {
+            body {
+                background-image: url('Mlampic_p.png');
+            }
             h1 { font-size: 2.5rem; }
             .game-grid { grid-template-columns: 1fr; }
             .game-card { padding: 30px 20px; }
@@ -144,10 +157,17 @@
             transition: color 0.3s;
         }
         .footer a:hover { color: white; }
+        .main-logo {
+            max-width: 250px;
+            height: auto;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+        }
     </style>
 </head>
 <body>
     <div class="header">
+        <img src="Mlampic_L.png" alt="Mlampic Games Logo" class="main-logo">
         <h1>🏆 Mlampic Games</h1>
         <h2>Select Your Event</h2>
         <div class="menu-controls">

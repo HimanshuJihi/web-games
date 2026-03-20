@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mlampic-cache-v8';
+const CACHE_NAME = 'mlampic-cache-v10';
 
 // उन सभी फ़ाइलों की लिस्ट जिन्हें ऑफलाइन खेलने के लिए सेव करना है
 const urlsToCache = [
@@ -35,7 +35,8 @@ const urlsToCache = [
     './favicon-16x16.png',
     './apple-touch-icon.png',
     './android-chrome-192x192.png',
-    './android-chrome-512x512.png'
+    './android-chrome-512x512.png',
+    './game-logo.png'
 ];
 
 // इंस्टॉल होने पर फ़ाइलों को कैश (Cache) में सेव करें

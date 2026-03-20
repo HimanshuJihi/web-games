@@ -96,6 +96,36 @@
             margin-bottom: 15px;
             filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.3));
         }
+        .game-logo-img {
+            height: 4rem;
+            width: auto;
+            margin-bottom: 15px;
+            filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.3));
+        }
+        .featured-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 140, 0, 0.2)) !important;
+            border-color: #FFD700 !important;
+            position: relative;
+            overflow: hidden;
+        }
+        .featured-card:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 140, 0, 0.3)) !important;
+            border-color: #FFF !important;
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.4) !important;
+        }
+        .badge {
+            position: absolute;
+            top: 15px;
+            right: -35px;
+            background: #E91E63;
+            color: white;
+            padding: 5px 40px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            transform: rotate(45deg);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+        }
         .game-title {
             font-size: 1.5rem;
             font-weight: 600;
@@ -230,8 +260,9 @@
             <span class="game-icon">🤺</span>
             <span class="game-title">Javelin Throw</span>
         </a>
-        <a href="https://auctiontoarena.netlify.app/" class="game-card">
-            <span class="game-icon">🏏</span>
+        <a href="https://auctiontoarena.netlify.app/" class="game-card featured-card" target="_blank">
+            <div class="badge">NEW</div>
+            <img src="game-logo.png" alt="Cricket_t20 Logo" class="game-logo-img">
             <span class="game-title">Cricket_t20</span>
         </a>
     </div>

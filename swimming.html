@@ -16,13 +16,14 @@
         body {
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             background-color: #e0f7fa; /* Light cyan background */
             font-family: sans-serif;
             margin: 0;
-            overflow: hidden;
+            overflow-x: hidden;
+            padding: 60px 20px 40px 20px;
+            box-sizing: border-box;
             touch-action: manipulation;
         }
         h1 {
@@ -120,6 +121,32 @@
             font-size: 16px;
             z-index: 10;
         }
+
+        /* SEO Article Styles */
+        .seo-article {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            color: #333;
+            line-height: 1.6;
+            text-align: left;
+        }
+        .seo-article h2 {
+            color: #006064;
+            margin-top: 0;
+            border-bottom: 2px solid #006064;
+            padding-bottom: 10px;
+        }
+        .seo-article h3 {
+            color: #0097a7;
+            margin-top: 20px;
+        }
+        .seo-article p { font-size: 16px; margin-bottom: 15px; }
+        .seo-article ul { margin-bottom: 15px; }
         #startButton { font-size: 2em; padding: 10px 30px; border-radius: 10px; cursor: pointer; }
         
         /* Best Time & Record styles imported from your existing structure */
@@ -140,8 +167,6 @@
             #restartButton { margin-top: 10px; padding: 8px 16px; font-size: 16px; }
             .settings-container { font-size: 14px; margin: 5px 0; }
             .info-display { margin-top: 10px; font-size: 18px; }
-            .controls { margin-top: 10px; gap: 10px; }
-            .game-container { padding: 5px; }
         }
         
         /* Orientation Warning Overlay */
@@ -184,12 +209,16 @@
             h1 { font-size: 18px; margin: 5px 0; }
             .pool { height: 120px; }
             .swimmer { font-size: 24px; }
-            .tap-button { width: 90px; height: 45px; font-size: 12px; border-width: 2px;}
             #startButton { font-size: 16px; padding: 5px 15px; margin-top: 5px;}
             #restartButton { margin-top: 5px; padding: 5px 15px; font-size: 14px; }
             .settings-container { font-size: 14px; margin: 2px 0; }
             .info-display { margin-top: 5px; font-size: 14px; }
-            .controls { margin-top: 5px; gap: 10px; }
+            .controls {
+                position: fixed; bottom: 15px; left: 0; width: 100%;
+                justify-content: space-between; padding: 0 40px; box-sizing: border-box;
+                pointer-events: none; z-index: 20; margin: 0;
+            }
+            .tap-button { pointer-events: auto; width: 100px; height: 60px; font-size: 14px; border-width: 2px;}
             .game-container { padding: 5px; border-width: 3px; }
             .exit-button { padding: 5px 10px; font-size: 12px; top: 5px; left: 5px; }
         }
@@ -205,9 +234,8 @@
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1665181964170021"
      crossorigin="anonymous"></script>
-     <script src="https://pl28946104.profitablecpmratenetwork.com/99/43/84/994384db8366bc294e622f1edbf4c7b5.js"></script>
-     <script src="https://pl28946122.profitablecpmratenetwork.com/6a/3b/15/6a3b15f21181e240b8e5f5872788a33f.js"></script>
-
+<script async="async" data-cfasync="false" src="https://pl28949395.profitablecpmratenetwork.com/41327cf038beca17a51651a9b29d126d/invoke.js"></script>
+<div id="container-41327cf038beca17a51651a9b29d126d"></div>
 </head>
 <body>
     <!-- Orientation Warning Overlay -->
@@ -248,6 +276,27 @@
     <div id="newRecordMsg" class="new-record-msg">New Record! 🎉</div>
     <button id="startButton">Dive In</button>
     <button id="restartButton" style="display: none;">Swim Again</button>
+
+    <!-- SEO Friendly Article Section -->
+    <div class="seo-article">
+        <h2>Play 100m Swimming Game Online - Free HTML5 Water Sports</h2>
+        <p>Dive into the pool and race for the gold! <strong>100m Swimming</strong> on Mlampic Games is a fast-paced, action-packed HTML5 sports mini-game. Test your rhythm and speed against fast aquatic opponents like sharks, dolphins, and whales. Play instantly in your web browser without downloading any apps.</p>
+        
+        <h3>How to Play 100m Swimming?</h3>
+        <p>To win the race, you must master the art of the perfect swimming stroke:</p>
+        <ul>
+            <li><strong>Alternate Your Strokes:</strong> Tap the 'Left Stroke' (A key) and 'Right Stroke' (L key) buttons alternately and as fast as you can to propel your swimmer forward.</li>
+            <li><strong>The Golden Rule:</strong> You cannot press the same button twice in a row! If you break the rhythm, your swimmer will lose momentum and slow down.</li>
+            <li><strong>Beat the Sea Creatures:</strong> You will be racing against an AI-controlled Shark, Dolphin, and Whale. Outswim them to cross the red finish line first.</li>
+        </ul>
+
+        <h3>Tips for Setting a World Record</h3>
+        <p>To conquer the 'Hard' difficulty and achieve the best possible time, keep these strategies in mind:</p>
+        <ul>
+            <li><strong>Find a Fast Rhythm:</strong> Do not just mash buttons. Establish a consistent, rapid 1-2, 1-2 rhythm. Using two fingers (one for each button) is highly recommended.</li>
+            <li><strong>Perfect Starts:</strong> Wait for the "Go!" signal. Any delay in starting will give your aquatic opponents a significant advantage.</li>
+        </ul>
+    </div>
 
     <script src="swimming.js"></script>
 </body>

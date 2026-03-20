@@ -16,13 +16,14 @@
         body {
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             background-color: #70c5ce;
             font-family: sans-serif;
             margin: 0;
-            overflow: hidden;
+            overflow-x: hidden;
+            padding: 60px 20px 40px 20px;
+            box-sizing: border-box;
             touch-action: manipulation; /* मोबाइल पर डबल-टैप ज़ूम को रोकता है */
         }
         h1 {
@@ -166,6 +167,32 @@
             100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
         }
 
+        /* SEO Article Styles */
+        .seo-article {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            color: #333;
+            line-height: 1.6;
+            text-align: left;
+        }
+        .seo-article h2 {
+            color: #8b4513;
+            margin-top: 0;
+            border-bottom: 2px solid #8b4513;
+            padding-bottom: 10px;
+        }
+        .seo-article h3 {
+            color: #4682b4;
+            margin-top: 20px;
+        }
+        .seo-article p { font-size: 16px; margin-bottom: 15px; }
+        .seo-article ul { margin-bottom: 15px; }
+
         /* Orientation Warning Overlay */
         #orientation-warning {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -189,17 +216,20 @@
             .track { height: 80px; }
             .player, .opponent { font-size: 30px; transform: rotateX(-40deg) translateY(-10px) scaleX(-1); }
             .info-display { margin-top: 10px; font-size: 16px; }
-            .controls { margin-top: 10px; gap: 10px; }
-            .tap-button { width: 70px; height: 70px; font-size: 16px; border: 3px solid white;}
+            .controls {
+                position: fixed; bottom: 15px; left: 0; width: 100%;
+                justify-content: space-between; padding: 0 40px; box-sizing: border-box;
+                pointer-events: none; z-index: 20; margin: 0;
+            }
+            .tap-button { pointer-events: auto; width: 70px; height: 70px; font-size: 16px; border: 3px solid white; }
             .game-container { padding: 10px; }
             .exit-button { padding: 5px 10px; font-size: 12px; top: 5px; left: 5px; }
         }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1665181964170021"
      crossorigin="anonymous"></script>
-     <script src="https://pl28946104.profitablecpmratenetwork.com/99/43/84/994384db8366bc294e622f1edbf4c7b5.js"></script>
-     <script src="https://pl28946122.profitablecpmratenetwork.com/6a/3b/15/6a3b15f21181e240b8e5f5872788a33f.js"></script>
-
+<script async="async" data-cfasync="false" src="https://pl28949395.profitablecpmratenetwork.com/41327cf038beca17a51651a9b29d126d/invoke.js"></script>
+<div id="container-41327cf038beca17a51651a9b29d126d"></div>
 </head>
 <body>
     <!-- Orientation Warning Overlay -->
@@ -241,6 +271,31 @@
         }</style>
     <button id="startButton">Start</button>
     <button id="restartButton" style="display: none;">Play Again</button>
+
+    <!-- SEO Friendly Article Section -->
+    <div class="seo-article">
+        <h2>Play 100m Sprint Online - Free HTML5 Sports Game</h2>
+        <p>Welcome to the ultimate track and field challenge! The <strong>100m Sprint</strong> on Mlampic Games is a fast-paced, highly addictive HTML5 sports mini-game that tests your reflexes and tapping speed. Whether you are a casual gamer looking for a quick break or a competitive player aiming for a new world record, this game delivers pure adrenaline right in your browser.</p>
+        
+        <h3>How to Play 100m Sprint?</h3>
+        <p>The rules of the game are simple but mastering it requires lightning-fast fingers:</p>
+        <ul>
+            <li><strong>On Mobile/Tablet:</strong> Tap the 'A' and 'L' buttons (or the colored circular buttons) on your screen alternately and as fast as you can.</li>
+            <li><strong>On Desktop/PC:</strong> Use the 'A' and 'L' keys on your keyboard to make your athlete run forward.</li>
+            <li><strong>The Rule:</strong> You must alternate your taps. Pressing the same button twice in a row will not give you a speed boost. Rhythm and speed are key!</li>
+        </ul>
+
+        <h3>Tips and Tricks to Win the Gold Medal</h3>
+        <p>Beating the AI opponent on 'Easy' is just a warm-up. If you want to conquer the 'Hard' difficulty and set a top-tier best time, follow these tips:</p>
+        <ul>
+            <li><strong>Find Your Rhythm:</strong> Don't just mash buttons blindly. Find a fast, consistent 1-2, 1-2 rhythm.</li>
+            <li><strong>Use Both Hands:</strong> Place your left finger on the 'A' button and your right finger on the 'L' button to maximize tapping efficiency.</li>
+            <li><strong>Perfect Start:</strong> Anticipate the "Go!" signal. Starting even a fraction of a second late can cost you the race against the Hard AI.</li>
+        </ul>
+
+        <h3>Why Play on Mlampic Games?</h3>
+        <p>Our 100m Sprint game is completely free, requires no downloads, and works perfectly offline once loaded. Play it anytime, anywhere, and challenge your friends to beat your best time!</p>
+    </div>
 
     <script src="sprint.js"></script>
 </body>

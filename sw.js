@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mlampic-cache-v10';
+const CACHE_NAME = 'mlampic-cache-v14';
 
 // उन सभी फ़ाइलों की लिस्ट जिन्हें ऑफलाइन खेलने के लिए सेव करना है
 const urlsToCache = [
@@ -8,6 +8,7 @@ const urlsToCache = [
     './privacy.html',
     './rules.html',
     './terms.html',
+    './contact.html',
     './archery.html',
     './archery.js',
     './basketball.html',

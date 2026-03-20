@@ -46,6 +46,16 @@
             padding: 20px;
             box-sizing: border-box;
         }
+        
+        /* Custom App-like Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: rgba(30, 60, 114, 0.5); }
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5); 
+            border-radius: 5px; 
+        }
+        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(45deg, #3a7bd5, #00d2ff); }
+
         .header {
             margin-top: 40px;
             margin-bottom: 40px;
@@ -55,6 +65,11 @@
             margin: 0 0 10px 0;
             text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.4);
             letter-spacing: 2px;
+            animation: textGlow 3s infinite alternate;
+        }
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px rgba(255,255,255,0.2), 0 0 20px rgba(0, 210, 255, 0.2); }
+            100% { text-shadow: 0 0 20px rgba(0, 210, 255, 0.8), 0 0 40px rgba(0, 210, 255, 0.6); }
         }
         h2 {
             font-weight: 400;
@@ -84,7 +99,25 @@
             align-items: center;
             transition: all 0.3s ease;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            animation: fadeInUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Staggered Animation Delays for Game Cards */
+        .game-card:nth-child(1) { animation-delay: 0.1s; }
+        .game-card:nth-child(2) { animation-delay: 0.2s; }
+        .game-card:nth-child(3) { animation-delay: 0.3s; }
+        .game-card:nth-child(4) { animation-delay: 0.4s; }
+        .game-card:nth-child(5) { animation-delay: 0.5s; }
+        .game-card:nth-child(6) { animation-delay: 0.6s; }
+        .game-card:nth-child(7) { animation-delay: 0.7s; }
+        .game-card:nth-child(8) { animation-delay: 0.8s; }
+        .game-card:nth-child(9) { animation-delay: 0.9s; }
+        .game-card:nth-child(10) { animation-delay: 1.0s; }
+        
         .game-card:hover {
             transform: translateY(-10px);
             background: rgba(255, 255, 255, 0.2);
@@ -159,19 +192,28 @@
             box-shadow: 0 6px 20px rgba(244, 67, 54, 0.5);
         }
         .share-btn {
-            padding: 10px 20px;
+            padding: 10px 25px;
             font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 1.1rem;
+            font-weight: 700;
             color: white;
-            background-color: rgba(33, 150, 243, 0.8); /* Blue color */
-            border: 2px solid rgba(33, 150, 243, 1);
-            border-radius: 8px;
+            background: linear-gradient(45deg, #FF416C, #FF4B2B);
+            border: none;
+            border-radius: 25px; /* Pill shape */
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
+            animation: pulse-glow 2s infinite;
         }
-        .share-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(33, 150, 243, 0.5); }
+        .share-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 65, 108, 0.6);
+        }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(255, 65, 108, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 65, 108, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 65, 108, 0); }
+        }
         .setting-btn {
             padding: 10px 20px;
             font-family: 'Poppins', sans-serif;
@@ -205,12 +247,42 @@
             margin-bottom: 10px;
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
         }
+        
+        /* Cookie Consent Banner */
+        #cookie-consent {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(30, 60, 114, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+            z-index: 10000;
+            text-align: center;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        #cookie-consent a { color: #FFD700; text-decoration: underline; }
+        .cookie-btn {
+            background: #4CAF50; color: white; border: none;
+            padding: 8px 20px; margin-top: 10px; margin-left: 15px;
+            border-radius: 5px; cursor: pointer; font-weight: bold;
+            font-family: 'Poppins', sans-serif; transition: background 0.3s;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
+        }
+        .cookie-btn:hover { background: #45a049; }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1665181964170021"
      crossorigin="anonymous"></script>
      <script src="https://pl28946104.profitablecpmratenetwork.com/99/43/84/994384db8366bc294e622f1edbf4c7b5.js"></script>
      <script src="https://pl28946122.profitablecpmratenetwork.com/6a/3b/15/6a3b15f21181e240b8e5f5872788a33f.js"></script>
-</head>
+<script async="async" data-cfasync="false" src="https://pl28949395.profitablecpmratenetwork.com/41327cf038beca17a51651a9b29d126d/invoke.js"></script>
+<div id="container-41327cf038beca17a51651a9b29d126d"></div>
+    </head>
 <body>
     <div class="header">
         <img src="Mlampic_L.png" alt="Mlampic Games Logo" class="main-logo">
@@ -271,7 +343,14 @@
         <a href="rules.html">How to Play</a> | 
         <a href="about.html">About Us</a> | 
         <a href="privacy.html">Privacy Policy</a> | 
-        <a href="terms.html">Terms & Conditions</a>
+        <a href="terms.html">Terms & Conditions</a> | 
+        <a href="contact.html">Contact Us</a>
+    </div>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-consent">
+        We use cookies and local storage to save your game progress, personalize content, and serve targeted ads. By continuing to use Mlampic Games, you agree to our <a href="privacy.html">Privacy Policy</a>.
+        <button class="cookie-btn" id="accept-cookies">Got it!</button>
     </div>
 
     <script>
@@ -329,6 +408,19 @@
                 localStorage.removeItem('javelinBestScore');
                 alert('All game progress has been successfully reset!');
             }
+        });
+
+        // Cookie Consent Logic
+        window.addEventListener('DOMContentLoaded', () => {
+            const cookieConsent = document.getElementById('cookie-consent');
+            const acceptBtn = document.getElementById('accept-cookies');
+            if (!localStorage.getItem('cookieConsentAccepted')) {
+                cookieConsent.style.display = 'block';
+            }
+            acceptBtn.addEventListener('click', () => {
+                localStorage.setItem('cookieConsentAccepted', 'true');
+                cookieConsent.style.display = 'none';
+            });
         });
 
         // Register Service Worker for PWA / Offline Support

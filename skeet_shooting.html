@@ -25,6 +25,7 @@
             padding: 60px 20px 40px 20px;
             box-sizing: border-box;
             touch-action: manipulation;
+            overscroll-behavior-y: contain; /* स्क्रीन स्क्रॉल लॉक */
         }
         h1 { color: white; margin: 5px 0;}
         #gameCanvas {
@@ -32,8 +33,8 @@
             background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 60%, #4CAF50 60%, #4CAF50 100%);
             border: 5px solid #222;
             border-radius: 10px;
-            max-width: 95vw;
-            max-height: 80vh;
+            width: 100%;
+            max-width: min(95vw, 80vh * 16 / 9);
             aspect-ratio: 16 / 9;
             cursor: crosshair;
         }
@@ -56,6 +57,11 @@
             text-decoration: none;
             border-radius: 8px;
             font-size: 16px;
+        }
+        .fullscreen-btn {
+            position: absolute; top: 15px; right: 15px; padding: 10px 15px;
+            background-color: #2196F3; color: white; border: none;
+            border-radius: 8px; font-size: 16px; cursor: pointer; z-index: 10;
         }
         #gameControlButton { margin-top: 10px; padding: 10px 20px; font-size: 18px; cursor: pointer; }
 
@@ -103,7 +109,6 @@
         }
         @media screen and (max-width: 899px) and (orientation: landscape) {
             h1 { font-size: 18px; margin: 5px 0; }
-            #gameCanvas { max-height: 75vh; max-width: 95vw; }
             .info { font-size: 16px; margin-top: 5px; }
             .exit-button { padding: 5px 10px; font-size: 12px; top: 5px; left: 5px; }
             #gameControlButton { margin-top: 5px !important; padding: 5px 15px !important; font-size: 14px !important; }
@@ -122,6 +127,7 @@
     </div>
 
     <a href="index.html" class="exit-button">Back to Menu</a>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
     <h1>Skeet Shooting</h1>
     <canvas id="gameCanvas"></canvas>
     <div class="info">Score: <span id="score">0</span> / <span id="target-score">0</span> | Level: <span id="round">1</span> | Ammo: <span id="ammo">0</span></div>
@@ -149,5 +155,14 @@
     </div>
 
     <script src="skeet_shooting.js"></script>
+    <script>
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+    </script>
 </body>
 </html>

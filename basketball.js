@@ -391,8 +391,19 @@ function handleDragEnd(e) {
 canvas.addEventListener('mousedown', handleDragStart);
 canvas.addEventListener('mouseup', handleDragEnd);
 canvas.addEventListener('mouseleave', handleDragEnd); // Handle case where mouse leaves canvas
-canvas.addEventListener('touchstart', handleDragStart);
-canvas.addEventListener('touchend', handleDragEnd);
+
+canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault(); // Prevent default browser scrolling
+    handleDragStart(e);
+}, { passive: false });
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault(); // Stop scrolling while dragging on the canvas
+}, { passive: false });
+canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    handleDragEnd(e);
+}, { passive: false });
+
 window.addEventListener('resize', resizeCanvas);
 
 nextChallengeButton.addEventListener('click', () => {

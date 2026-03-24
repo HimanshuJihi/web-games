@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Hoop Stack Puzzle</title>
+    <meta name="description" content="Play Hoop Stack on Mlampic Games. Sort the colored hoops onto the correct poles to solve the puzzle!">
+    <meta name="keywords" content="hoop stack game, color sort puzzle, ring sort, Mlampic Games, brain teaser">
+    <meta property="og:title" content="Hoop Stack - Mlampic Games">
+    <!-- Favicon Setup -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" href="favicon.ico">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #4A148C; /* Deep Purple */
+            font-family: sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            padding: 60px 20px 40px 20px;
+            box-sizing: border-box;
+            touch-action: manipulation;
+            overscroll-behavior-y: contain; /* स्क्रीन स्क्रॉल लॉक */
+        }
+        h1 { color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin: 5px 0; }
+        
+        #gameCanvas {
+            background-color: #E1BEE7; /* Light Purple */
+            border: 5px solid #7B1FA2;
+            border-radius: 10px;
+            width: 100%;
+            /* max-width dynamically set in JS */
+            aspect-ratio: 4 / 3;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .info {
+            color: white; font-size: 20px; font-weight: bold;
+            margin-top: 15px; display: flex; gap: 20px;
+        }
+        
+        .controls { margin-top: 15px; display: flex; gap: 15px; }
+        .btn {
+            padding: 10px 20px; font-size: 16px; font-weight: bold; border-radius: 8px;
+            cursor: pointer; border: 2px solid white; color: white; transition: 0.2s;
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        #restartBtn { background-color: #FF9800; }
+        #restartBtn:active { transform: scale(0.95); }
+
+        .exit-button {
+            position: absolute; top: 15px; left: 15px; padding: 10px 20px;
+            background-color: #f44336; color: white; text-decoration: none;
+            border-radius: 8px; font-size: 16px; z-index: 10;
+        }
+        .fullscreen-btn {
+            position: absolute; top: 15px; right: 15px; padding: 10px 15px;
+            background-color: #2196F3; color: white; border: none;
+            border-radius: 8px; font-size: 16px; cursor: pointer; z-index: 10;
+        }
+
+        /* SEO Article Styles */
+        .seo-article {
+            width: 100%; max-width: 800px; background: rgba(255, 255, 255, 0.95);
+            padding: 30px; border-radius: 12px; margin-top: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); color: #333; line-height: 1.6;
+        }
+        .seo-article h2 { color: #4A148C; margin-top: 0; border-bottom: 2px solid #4A148C; padding-bottom: 10px; }
+        .seo-article h3 { color: #7B1FA2; margin-top: 20px; }
+        .seo-article p { font-size: 16px; margin-bottom: 15px; }
+        .seo-article ul { margin-bottom: 15px; }
+
+        /* Orientation Warning */
+        #orientation-warning {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #4A148C; color: white; z-index: 9999;
+            flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; font-size: 22px; padding: 20px; box-sizing: border-box;
+        }
+        .rotate-icon { font-size: 60px; margin-bottom: 20px; animation: rotateIcon 2s infinite ease-in-out; }
+        @keyframes rotateIcon { 0% { transform: rotate(0deg); } 50% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
+        @media screen and (max-width: 899px) and (orientation: portrait) { #orientation-warning { display: flex; } }
+
+        .warning-exit {
+            margin-top: 20px; padding: 10px 20px; background-color: #f44336;
+            color: white; text-decoration: none; border-radius: 8px; font-size: 18px;
+        }
+
+        @media screen and (max-width: 899px) and (orientation: landscape) {
+            h1 { font-size: 18px; margin: 2px 0; }
+            .info { font-size: 14px; margin-top: 5px; }
+            .controls { margin-top: 5px; }
+            .btn { padding: 5px 15px; font-size: 14px; }
+            .exit-button { padding: 5px 10px; font-size: 12px; top: 5px; left: 5px; }
+        }
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1665181964170021" crossorigin="anonymous"></script>
+     <script async="async" data-cfasync="false" src="https://pl28949395.profitablecpmratenetwork.com/41327cf038beca17a51651a9b29d126d/invoke.js"></script>
+<div id="container-41327cf038beca17a51651a9b29d126d"></div>
+
+</head>
+<body>
+    <div id="orientation-warning">
+        <div class="rotate-icon">📱</div>
+        <p>Please rotate your phone sideways (Landscape mode) to play Hoop Stack.</p>
+        <a href="index.html" class="warning-exit">Back to Menu</a>
+    </div>
+
+    <a href="index.html" class="exit-button">Back to Menu</a>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    <h1>Hoop Stack Puzzle</h1>
+    
+    <div class="info">
+        <span>Level: <span id="levelDisplay">1</span></span>
+        <span>Moves: <span id="movesDisplay">0</span></span>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+    
+    <div class="controls">
+        <button id="restartBtn" class="btn">Restart Level</button>
+        <button id="undoBtn" class="btn" style="background-color: #2196F3;" disabled>Undo (2)</button>
+        <button id="nextBtn" class="btn" style="display: none; background-color: #4CAF50;">Next Level</button>
+    </div>
+
+    <!-- SEO Friendly Article Section -->
+    <div class="seo-article">
+        <h2>Play Hoop Stack Puzzle Online - Free Color Sorting Game</h2>
+        <p>Exercise your brain with <strong>Hoop Stack</strong> on Mlampic Games! This HTML5 color-sorting puzzle is simple to learn but difficult to master. Move the colored rings from one pole to another until each pole contains only one solid color. Play instantly in your web browser with no downloads required.</p>
+        
+        <h3>How to Play Hoop Stack?</h3>
+        <p>The rules of this puzzle are straightforward, but you must think ahead:</p>
+        <ul>
+            <li><strong>Select a Ring:</strong> Tap or click on a pole to lift the top hoop.</li>
+            <li><strong>Move the Ring:</strong> Tap another pole to drop the hoop there.</li>
+            <li><strong>The Core Rule:</strong> You can only place a hoop on top of another hoop if they are the <strong>same color</strong>, or if the target pole is completely <strong>empty</strong>.</li>
+            <li><strong>Multiple Rings:</strong> If you have multiple rings of the same color on top of a pole, they will be picked up and moved together automatically!</li>
+            <li><strong>Undo Limit:</strong> You can only undo your moves 2 times per level. Use them wisely!</li>
+            <li><strong>Pole Limit:</strong> A single pole can hold a maximum of 4 hoops at a time.</li>
+        </ul>
+
+        <h3>Tips to Solve Faster</h3>
+        <ul>
+            <li><strong>Don't Rush:</strong> Unlike action games, there is no time limit. Take your time to plan your moves.</li>
+            <li><strong>Free Up Empty Poles:</strong> Empty poles are your best friends. They give you the flexibility to temporarily store hoops while you organize others.</li>
+            <li><strong>Work from the Bottom Up:</strong> Focus on getting the correct base colors at the bottom of the poles first.</li>
+        </ul>
+
+        <h3>Why Play on Mlampic Games?</h3>
+        <p>Enjoy a smooth, ad-friendly, and privacy-focused gaming experience. Our Hoop Stack game automatically saves your level progress to your device, so you can pick up your puzzle right where you left off!</p>
+    </div>
+
+    <script src="hoop_stack.js"></script>
+    <script>
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+    </script>
+</body>
+</html>

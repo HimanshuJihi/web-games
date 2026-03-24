@@ -24,12 +24,13 @@
             padding: 60px 20px 40px 20px;
             box-sizing: border-box;
             touch-action: manipulation;
+            overscroll-behavior-y: contain; /* स्क्रीन स्क्रॉल लॉक */
         }
         canvas {
             border: 2px solid black;
             background-color: #ffffff;
-            max-width: 90vw;
-            max-height: 70vh; /* Reduced to make space for other UI elements */
+            width: 100%;
+            max-width: min(95vw, 70vh * 1 / 2);
             aspect-ratio: 1 / 2;
         }
         button {
@@ -61,6 +62,11 @@
             border-radius: 8px;
             font-size: 16px;
             z-index: 10; /* Ensure it's above other elements */
+        }
+        .fullscreen-btn {
+            position: absolute; top: 15px; right: 15px; padding: 10px 15px;
+            background-color: #2196F3; color: white; border: none;
+            border-radius: 8px; font-size: 16px; cursor: pointer; z-index: 10;
         }
 
         /* SEO Article Styles */
@@ -108,7 +114,6 @@
         @media screen and (max-width: 899px) and (orientation: landscape) {
             p { font-size: 12px; margin-top: 5px; }
             .settings { margin-bottom: 5px; }
-            canvas { max-height: 70vh; max-width: 45vw; }
             .exit-button { padding: 5px 10px; font-size: 12px; top: 5px; left: 5px; }
         }
     </style>
@@ -125,6 +130,7 @@
     </div>
 
     <a href="index.html" class="exit-button">Back to Menu</a>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
         <p style="font-size: 12px; max-width: 400px; text-align: center;"><b>Scoring Rule:</b> At the end of a round, only the team with the stone closest to the center scores. That team gets 1 point for every stone that is closer to the center than the opponent's closest stone.</p>
 
     <div class="settings">
@@ -168,5 +174,14 @@
     </div>
 
     <script src="curling.js"></script>
+    <script>
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+    </script>
 </body>
 </html>

@@ -25,6 +25,7 @@
             padding: 60px 20px 40px 20px;
             box-sizing: border-box;
             touch-action: manipulation;
+            overscroll-behavior-y: contain; /* स्क्रीन स्क्रॉल लॉक */
         }
         h1 {
             color: white;
@@ -34,8 +35,8 @@
             background-color: #8BC34A; /* Lighter green */
             border: 5px solid #388E3C;
             border-radius: 10px;
-            max-width: 90vw;
-            max-height: 70vh;
+            width: 100%;
+            max-width: min(95vw, 75vh * 4 / 3);
             aspect-ratio: 4 / 3; /* A common aspect ratio for games */
         }
         .info {
@@ -58,6 +59,11 @@
             border-radius: 8px;
             font-size: 16px;
             z-index: 10;
+        }
+        .fullscreen-btn {
+            position: absolute; top: 15px; right: 15px; padding: 10px 15px;
+            background-color: #2196F3; color: white; border: none;
+            border-radius: 8px; font-size: 16px; cursor: pointer; z-index: 10;
         }
 
         /* SEO Article Styles */
@@ -104,7 +110,6 @@
         }
         @media screen and (max-width: 899px) and (orientation: landscape) {
             h1 { font-size: 18px; margin: 5px 0; }
-            #gameCanvas { max-height: 70vh; max-width: 90vw; }
             .info { font-size: 16px; margin-top: 5px; }
             .exit-button { padding: 5px 10px; font-size: 12px; top: 5px; left: 5px; }
             #gameControlButton { margin-top: 5px !important; padding: 5px 15px !important; font-size: 14px !important; }
@@ -123,6 +128,7 @@
     </div>
 
     <a href="index.html" class="exit-button">Back to Menu</a>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
     <h1>Target Practice</h1>
     <canvas id="gameCanvas"></canvas>
     <div class="info">Score: <span id="score">0</span> / <span id="target-score">0</span> | Time: <span id="time-left">30</span>s</div>
@@ -150,5 +156,14 @@
     </div>
 
     <script src="target_practice.js"></script>
+    <script>
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+    </script>
 </body>
 </html>

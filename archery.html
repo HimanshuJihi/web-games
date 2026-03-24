@@ -25,6 +25,7 @@
             padding: 60px 20px 40px 20px;
             box-sizing: border-box;
             touch-action: manipulation;
+            overscroll-behavior-y: contain; /* स्क्रीन स्क्रॉल लॉक */
         }
         h1 {
             color: white;
@@ -34,8 +35,8 @@
             background-color: #4DB6AC; /* Lighter Teal */
             border: 5px solid #004D40;
             border-radius: 10px;
-            max-width: 90vw;
-            max-height: 70vh;
+            width: 100%;
+            max-width: min(95vw, 75vh * 16 / 9);
             aspect-ratio: 16 / 9;
         }
         .info {
@@ -58,6 +59,11 @@
             border-radius: 8px;
             font-size: 16px;
             z-index: 10;
+        }
+        .fullscreen-btn {
+            position: absolute; top: 15px; right: 15px; padding: 10px 15px;
+            background-color: #2196F3; color: white; border: none;
+            border-radius: 8px; font-size: 16px; cursor: pointer; z-index: 10;
         }
         #arrow-selection {
             display: flex;
@@ -142,7 +148,6 @@
         }
         @media screen and (max-width: 899px) and (orientation: landscape) {
             h1 { font-size: 20px; margin: 2px 0; }
-            #gameCanvas { max-width: 95vw; max-height: 80vh; }
             .info { font-size: 16px; margin-top: 5px; }
             .exit-button { padding: 5px 10px; font-size: 12px; top: 5px; left: 5px; }
             .arrow-btn { padding: 4px 10px; font-size: 14px; }
@@ -152,7 +157,6 @@
         /* Desktop Large Screen Adjustments */
         @media screen and (min-width: 900px) {
             h1 { margin: 5px 0; }
-            #gameCanvas { max-width: 95vw; max-height: 82vh; }
             .info { margin-top: 5px; }
             #arrow-selection { margin-top: 5px; }
             #gameControlButton { margin-top: 5px !important; }
@@ -181,6 +185,7 @@
     </div>
 
     <a href="index.html" class="exit-button">Back to Menu</a>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
     <h1>Archery</h1>
     <canvas id="gameCanvas"></canvas>
     <div class="info">Score: <span id="score">0</span> / <span id="target-score">0</span> | Arrows: <span id="arrows-left">0</span></div>
@@ -218,5 +223,14 @@
     </div>
 
     <script src="archery.js"></script>
+    <script>
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+    </script>
 </body>
 </html>

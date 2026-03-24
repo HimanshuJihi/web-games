@@ -25,13 +25,14 @@
             padding: 60px 20px 40px 20px;
             box-sizing: border-box;
             touch-action: manipulation;
+            overscroll-behavior-y: contain; /* स्क्रीन स्क्रॉल लॉक */
         }
         h1 {
             color: #006064;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
         .game-container {
-            width: 90%;
+            width: 98%;
             max-width: 800px;
             background: #b2ebf2;
             border: 5px solid #0097a7;
@@ -120,6 +121,11 @@
             border-radius: 8px;
             font-size: 16px;
             z-index: 10;
+        }
+        .fullscreen-btn {
+            position: absolute; top: 15px; right: 15px; padding: 10px 15px;
+            background-color: #2196F3; color: white; border: none;
+            border-radius: 8px; font-size: 16px; cursor: pointer; z-index: 10;
         }
 
         /* SEO Article Styles */
@@ -246,6 +252,7 @@
     </div>
 
     <a href="index.html" class="exit-button">Back to Menu</a>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
     <h1>100m Swimming Match</h1>
     <div class="settings-container">
         <label for="difficultySelect">Difficulty:</label>
@@ -299,5 +306,14 @@
     </div>
 
     <script src="swimming.js"></script>
+    <script>
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+    </script>
 </body>
 </html>

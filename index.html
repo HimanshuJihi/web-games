@@ -79,11 +79,11 @@
         }
         .game-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* Better sizing for desktop/tablet */
+            gap: 20px;
             width: 100%;
-            max-width: 1000px;
-            padding: 20px;
+            max-width: 1200px; /* Wider max-width for big screens */
+            padding: 10px;
         }
         .game-card {
             background: rgba(255, 255, 255, 0.1);
@@ -167,10 +167,18 @@
         @media (max-width: 600px) {
             body {
                 background-image: url('Mlampic_p.png');
+                padding: 10px; /* Less outer margin on mobile */
             }
-            h1 { font-size: 2.5rem; }
-            .game-grid { grid-template-columns: 1fr; }
-            .game-card { padding: 30px 20px; }
+            h1 { font-size: 2.2rem; }
+            .game-grid { 
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Two responsive columns on mobile */
+                gap: 15px; 
+                padding: 5px; 
+            }
+            .game-card { padding: 25px 10px; }
+            .game-icon { font-size: 3rem; margin-bottom: 10px; }
+            .game-logo-img { height: 3rem; margin-bottom: 10px; }
+            .game-title { font-size: 1.1rem; }
         }
         .reset-btn {
             margin-top: 20px;
@@ -332,6 +340,14 @@
             <span class="game-icon">🤺</span>
             <span class="game-title">Javelin Throw</span>
         </a>
+        <a href="hoop_stack.html" class="game-card" style="background: rgba(156, 39, 176, 0.2); border-color: rgba(156, 39, 176, 0.5);">
+            <span class="game-icon">⭕</span>
+            <span class="game-title">Hoop Stack</span>
+        </a>
+        <a href="tic_tac_toe.html" class="game-card">
+            <span class="game-icon">❌⭕</span>
+            <span class="game-title">Tic Tac Toe</span>
+        </a>
         <a href="https://auctiontoarena.netlify.app/" class="game-card featured-card" target="_blank">
             <div class="badge">NEW</div>
             <img src="game-logo.png" alt="Cricket_t20 Logo" class="game-logo-img">
@@ -406,6 +422,7 @@
                 localStorage.removeItem('swimmingBestTime_hard');
                 localStorage.removeItem('longJumpBestScore');
                 localStorage.removeItem('javelinBestScore');
+                localStorage.removeItem('hoopStackLevel');
                 alert('All game progress has been successfully reset!');
             }
         });

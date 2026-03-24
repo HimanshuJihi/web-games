@@ -17,6 +17,7 @@
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh; background-color: #87CEEB; font-family: sans-serif;
             margin: 0; overflow-x: hidden; padding: 60px 20px 40px 20px; box-sizing: border-box; touch-action: manipulation;
+            overscroll-behavior-y: contain; /* स्क्रीन स्क्रॉल लॉक */
         }
         h1 { color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin: 10px 0; }
         
@@ -26,8 +27,8 @@
         }
 
         #gameCanvas {
-            background-color: #e0e0e0; border-radius: 5px;
-            max-width: 95vw; max-height: 50vh; aspect-ratio: 2 / 1; display: block;
+            background-color: #e0e0e0; border-radius: 5px; width: 100%;
+            max-width: min(95vw, 60vh * 2 / 1); aspect-ratio: 2 / 1; display: block;
         }
 
         .info-panel {
@@ -59,6 +60,11 @@
             position: absolute; top: 15px; left: 15px; padding: 10px 20px;
             background-color: #f44336; color: white; text-decoration: none;
             border-radius: 8px; font-size: 16px; z-index: 10;
+        }
+        .fullscreen-btn {
+            position: absolute; top: 15px; right: 15px; padding: 10px 15px;
+            background-color: #2196F3; color: white; border: none;
+            border-radius: 8px; font-size: 16px; cursor: pointer; z-index: 10;
         }
 
         .new-record-msg {
@@ -132,7 +138,6 @@
             #leftBtn { bottom: 20px; left: 40px; }
             #rightBtn { bottom: 20px; right: 40px; }
             #throwBtn { bottom: 95px; right: 10px; width: 120px; height: 50px; font-size: 11px; border-radius: 10px; line-height: 1.2; }
-            #gameCanvas { max-height: 60vh; }
             .exit-button { padding: 5px 10px; font-size: 12px; top: 5px; left: 5px; }
             #startScreen p { font-size: 0.9rem; padding: 10px; margin: 5px; }
             #startBtn { padding: 10px 20px; font-size: 18px; }
@@ -151,6 +156,7 @@
     </div>
 
     <a href="index.html" class="exit-button">Back to Menu</a>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
     <h1>Javelin Throw</h1>
     
     <div class="info-panel">
@@ -213,5 +219,14 @@
     </div>
 
     <script src="javelin_throw.js"></script>
+    <script>
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+    </script>
 </body>
 </html>

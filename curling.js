@@ -4,6 +4,8 @@ const ctx = canvas.getContext('2d');
 const resetButton = document.getElementById('resetButton');
 const roundsSelect = document.getElementById('roundsSelect');
 const sweepButton = document.getElementById('sweepButton');
+const pauseBtn = document.getElementById('pauseBtn');
+let isPaused = false;
 
 // --- REFACTOR START ---
 // गेम के स्थिरांक (Game constants)
@@ -112,6 +114,8 @@ function startNewGame() {
     totalScores = { red: 0, blue: 0 };
     currentRound = 0;
     matchState = 'playing';
+    pauseBtn.style.display = 'block';
+    isPaused = false; pauseBtn.textContent = '⏸ Pause';
     setupNewRound();
 }
 
@@ -149,7 +153,7 @@ function gameLoop() {
 
 // 3. फिजिक्स और गेम स्टेट लॉजिक
 function update() {
-    if (gameState !== 'simulating') return;
+    if (gameState !== 'simulating' || isPaused) return;
 
     let stonesAreMoving = false;
 
@@ -194,6 +198,7 @@ function update() {
             if (currentRound >= maxRounds) {
                 matchState = 'matchOver';
                 resetButton.textContent = 'New Game';
+            pauseBtn.style.display = 'none';
             } else {
                 resetButton.textContent = 'Next Round';
             }
@@ -297,6 +302,14 @@ function draw() {
     }
 
     drawScore();
+
+    if (isPaused) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'white';
+        ctx.font = `bold ${30 * scale}px sans-serif`;
+        ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2);
+    }
 }
 
 function drawHouse() {
@@ -391,7 +404,7 @@ function getEventPosition(e) {
 }
 
 function handleDragStart(e) {
-    if (gameState === 'aiming') {
+    if (gameState === 'aiming' && !isPaused) {
         e.preventDefault(); // मोबाइल पर पेज को स्क्रॉल होने से रोकें
         initAudio(); // ऑडियो इंजन चालू करें
         isDragging = true;
@@ -401,14 +414,14 @@ function handleDragStart(e) {
 }
 
 function handleDragMove(e) {
-    if (isDragging) {
+    if (isDragging && !isPaused) {
         e.preventDefault();
         currentMousePos = getEventPosition(e);
     }
 }
 
 function handleDragEnd(e) {
-    if (isDragging) {
+    if (isDragging && !isPaused) {
         isDragging = false;
         const currentStone = stones[currentStoneIndex];
 
@@ -431,14 +444,14 @@ function handleDragEnd(e) {
 
 // कीबोर्ड इनपुट स्वीपिंग के लिए
 window.addEventListener('keydown', (e) => {
-    if (e.code === 'Space' && gameState === 'simulating') {
+    if (e.code === 'Space' && gameState === 'simulating' && !isPaused) {
         e.preventDefault();
         isSweeping = true;
     }
 });
 
 window.addEventListener('keyup', (e) => {
-    if (e.code === 'Space') {
+    if (e.code === 'Space' && !isPaused) {
         e.preventDefault();
         isSweeping = false;
     }
@@ -509,16 +522,16 @@ canvas.addEventListener('mousedown', handleDragStart);
 canvas.addEventListener('mousemove', handleDragMove);
 window.addEventListener('mouseup', handleDragEnd);
 
-canvas.addEventListener('touchstart', handleDragStart);
-canvas.addEventListener('touchmove', handleDragMove);
+canvas.addEventListener('touchstart', handleDragStart, { passive: false });
+canvas.addEventListener('touchmove', handleDragMove, { passive: false });
 window.addEventListener('touchend', handleDragEnd);
 
-sweepButton.addEventListener('mousedown', () => { if (gameState === 'simulating') isSweeping = true; });
+sweepButton.addEventListener('mousedown', () => { if (gameState === 'simulating' && !isPaused) isSweeping = true; });
 sweepButton.addEventListener('mouseup', () => { isSweeping = false; });
 sweepButton.addEventListener('mouseleave', () => { isSweeping = false; }); // अगर माउस बटन से बाहर चला जाए
 
 sweepButton.addEventListener('touchstart', (e) => {
-    if (gameState === 'simulating') {
+    if (gameState === 'simulating' && !isPaused) {
         e.preventDefault();
         isSweeping = true;
     }
@@ -535,6 +548,13 @@ resetButton.addEventListener('click', () => {
 });
 roundsSelect.addEventListener('change', startNewGame);
 window.addEventListener('resize', resizeCanvas);
+
+pauseBtn.addEventListener('click', () => {
+    if (matchState === 'playing') {
+        isPaused = !isPaused;
+        pauseBtn.textContent = isPaused ? '▶ Resume' : '⏸ Pause';
+    }
+});
 
 // गेम शुरू करें
 resizeCanvas(); // प्रारंभिक सेटअप

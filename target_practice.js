@@ -5,6 +5,8 @@ const scoreEl = document.getElementById('score');
 const timeLeftEl = document.getElementById('time-left');
 const targetScoreEl = document.getElementById('target-score');
 const gameControlButton = document.getElementById('gameControlButton');
+const pauseBtn = document.getElementById('pauseBtn');
+let isPaused = false;
 
 // --- RESPONSIVE SETUP ---
 const DESIGN_WIDTH = 800; // Original design width
@@ -128,6 +130,14 @@ function draw() {
             ctx.fillText('You have completed all levels!', canvas.width / 2, canvas.height / 2 + 20 * scale);
             break;
     }
+
+    if (isPaused) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'white';
+        ctx.font = `bold ${40 * scale}px sans-serif`;
+        ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2);
+    }
 }
 
 // --- Game Logic ---
@@ -142,7 +152,7 @@ function resizeCanvas() {
 }
 
 function spawnTarget() {
-    if (gameState !== 'playing') return;
+    if (gameState !== 'playing' || isPaused) return;
 
     const radius = TARGET_RADIUS * scale;
     const x = Math.random() * (canvas.width - 2 * radius) + radius;
@@ -161,7 +171,7 @@ function spawnTarget() {
     }, TARGET_SPAWN_INTERVAL * 2); // Target stays for 2 spawn intervals
 }
 function updateGame() {
-    if (gameState !== 'playing') return;
+    if (gameState !== 'playing' || isPaused) return;
 
     timeLeft--;
     timeLeftEl.textContent = timeLeft;
@@ -227,6 +237,7 @@ function runCountdown() {
 
 function startLevelGameplay() {
     gameState = 'playing';
+    pauseBtn.style.display = 'block';
     timeLeft = GAME_DURATION; // Reset timer
     timeLeftEl.textContent = timeLeft;
 
@@ -237,12 +248,16 @@ function startLevelGameplay() {
 function failLevel() {
     stopAllIntervals();
     gameState = 'level_failed';
+    isPaused = false; pauseBtn.textContent = '⏸ Pause';
+    pauseBtn.style.display = 'none';
     gameControlButton.textContent = 'Retry Level';
     gameControlButton.style.display = 'block';
 }
 
 function completeLevel() {
     stopAllIntervals();
+    isPaused = false; pauseBtn.textContent = '⏸ Pause';
+    pauseBtn.style.display = 'none';
     if (currentLevelIndex + 1 >= LEVELS.length) {
         gameState = 'game_complete';
         gameControlButton.textContent = 'Play Again';
@@ -276,7 +291,7 @@ function getEventPosition(e) {
 }
 
 function handleClick(e) {
-    if (gameState !== 'playing') return;
+    if (gameState !== 'playing' || isPaused) return;
 
     playGunshotSound(); // गनशॉट की आवाज़ प्ले करें
 
@@ -317,8 +332,18 @@ gameControlButton.addEventListener('click', () => {
             break;
     }
 });
-canvas.addEventListener('click', handleClick);
-canvas.addEventListener('touchstart', handleClick);
+
+pauseBtn.addEventListener('click', () => {
+    if (gameState === 'playing') {
+        isPaused = !isPaused;
+        pauseBtn.textContent = isPaused ? '▶ Resume' : '⏸ Pause';
+    }
+});
+canvas.addEventListener('mousedown', handleClick); // Use mousedown for faster response than click
+canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    handleClick(e);
+}, { passive: false });
 window.addEventListener('resize', resizeCanvas);
 
 // Initial setup

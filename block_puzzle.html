@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Block Puzzle - Mlampic Games</title>
+    <meta name="description" content="Play the classic Block Puzzle on Mlampic Games. Drag and drop blocks to clear lines and get the highest score!">
+    <meta name="keywords" content="block puzzle, puzzle game, tetris like game, Mlampic Games, brain teaser">
+    <meta property="og:title" content="Block Puzzle - Mlampic Games">
+    <!-- Favicon Setup -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" href="favicon.ico">
+    <style>
+        body {
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; background-color: #2c3e50; font-family: sans-serif;
+            margin: 0; padding: 60px 20px 40px 20px; box-sizing: border-box;
+            touch-action: manipulation; color: white; overscroll-behavior-y: contain;
+        }
+        h1 { margin: 5px 0; text-shadow: 0 0 10px rgba(255,255,255,0.5); font-size: 2.5rem; }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .info-bar {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 400px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        #gameCanvas {
+            background-color: #34495e;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            touch-action: none;
+        }
+
+        .controls { margin-top: 15px; }
+        .btn {
+            padding: 12px 30px; font-size: 18px; font-weight: bold; border-radius: 8px;
+            cursor: pointer; border: 2px solid white; color: white; background: #e74c3c;
+            transition: 0.2s; box-shadow: 0 4px 10px rgba(231, 76, 60, 0.4);
+        }
+        .btn:active { transform: scale(0.95); }
+
+        .exit-button {
+            position: absolute; top: 15px; left: 15px; padding: 10px 20px;
+            background-color: #c0392b; color: white; text-decoration: none;
+            border-radius: 8px; font-size: 16px; z-index: 10;
+        }
+        .fullscreen-btn {
+            position: absolute; top: 15px; right: 15px; padding: 10px 15px;
+            background-color: #2980b9; color: white; border: none;
+            border-radius: 8px; font-size: 16px; cursor: pointer; z-index: 10;
+        }
+
+        /* SEO Article Styles */
+        .seo-article {
+            width: 100%; max-width: 800px; background: rgba(255, 255, 255, 0.95);
+            padding: 30px; border-radius: 12px; margin-top: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); color: #333; line-height: 1.6;
+        }
+        .seo-article h2 { color: #2c3e50; margin-top: 0; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; }
+        .seo-article h3 { color: #e74c3c; margin-top: 20px; }
+        .seo-article p, .seo-article ul { font-size: 16px; margin-bottom: 15px; }
+
+        @media (max-width: 500px) {
+            h1 { font-size: 2rem; }
+            .info-bar { font-size: 1rem; }
+        }
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1665181964170021" crossorigin="anonymous"></script>
+     <script async="async" data-cfasync="false" src="https://pl28949395.profitablecpmratenetwork.com/41327cf038beca17a51651a9b29d126d/invoke.js"></script>
+<div id="container-41327cf038beca17a51651a9b29d126d"></div>
+
+</head>
+<body>
+    <a href="index.html" class="exit-button">Back to Menu</a>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    
+    <h1>Block Puzzle</h1>
+    
+    <div class="game-container">
+        <div class="info-bar">
+            <span>Score: <span id="score">0</span></span>
+            <span>High Score: <span id="highScore">0</span></span>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+        <div class="controls">
+            <button id="restartBtn" class="btn">Restart Game</button>
+        </div>
+    </div>
+
+    <!-- SEO Friendly Article Section -->
+    <div class="seo-article">
+        <h2>Play Block Puzzle Online - Free HTML5 Brain Game</h2>
+        <p>Welcome to the ultimate test of spatial reasoning! <strong>Block Puzzle</strong> on Mlampic Games is a modern take on the classic puzzle genre. It's easy to learn, incredibly addictive, and perfect for a quick mental workout. Play directly in your web browser with no downloads required.</p>
+        
+        <h3>How to Play Block Puzzle?</h3>
+        <p>The goal is to score as many points as possible by clearing lines on the grid:</p>
+        <ul>
+            <li><strong>Drag and Drop:</strong> You will be given three block shapes at a time. Drag them from the bottom and place them anywhere on the 10x10 grid.</li>
+            <li><strong>Clear Lines:</strong> When you complete a full horizontal or vertical line with blocks, that line will disappear, freeing up space and earning you points.</li>
+            <li><strong>Get New Pieces:</strong> You must place all three given pieces on the board to receive the next set of three.</li>
+            <li><strong>Game Over:</strong> The game ends when you can no longer fit any of the three available pieces onto the grid.</li>
+        </ul>
+
+        <h3>Scoring System</h3>
+        <ul>
+            <li><strong>Placing Blocks:</strong> You get 1 point for every individual square in a block you place. (e.g., placing a 4-square block gives you 4 points).</li>
+            <li><strong>Clearing Lines:</strong>
+                <ul>
+                    <li>1 Line: 10 Points</li>
+                    <li>2 Lines (Double): 30 Points</li>
+                    <li>3 Lines (Triple): 60 Points</li>
+                    <li>4 Lines (Quad): 100 Points</li>
+                    <li>5+ Lines (Combo): Even bigger bonus points!</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Tips and Tricks for a High Score</h3>
+        <p>To become a Block Puzzle master, think strategically:</p>
+        <ul>
+            <li><strong>Don't Rush:</strong> There is no time limit. Analyze the available pieces and the board before making a move.</li>
+            <li><strong>Keep Space for Big Pieces:</strong> Always try to leave enough room for the large 3x3 or 5x1 blocks. Getting stuck with a big piece is the most common way to lose.</li>
+            <li><strong>Aim for Combos:</strong> Clearing multiple lines at once gives a huge score bonus. Try to set up the board for doubles or triples.</li>
+            <li><strong>Don't Clutter the Center:</strong> It's often easier to work from the edges inwards. A cluttered center can quickly become unplayable.</li>
+        </ul>
+    </div>
+
+    <script src="block_puzzle.js"></script>
+    <script>
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+    </script>
+</body>
+</html>

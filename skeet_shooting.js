@@ -6,6 +6,8 @@ const targetScoreEl = document.getElementById('target-score');
 const roundEl = document.getElementById('round');
 const ammoEl = document.getElementById('ammo');
 const gameControlButton = document.getElementById('gameControlButton');
+const pauseBtn = document.getElementById('pauseBtn');
+let isPaused = false;
 
 const DESIGN_WIDTH = 1280;
 let scale = 1;
@@ -127,7 +129,7 @@ function createExplosion(x, y) {
 }
 
 function update() {
-    if (gameState !== 'playing') return;
+    if (gameState !== 'playing' || isPaused) return;
 
     // Spawn logic
     if (pigeonsToSpawn > 0) {
@@ -227,6 +229,14 @@ function draw() {
         ctx.font = `bold ${35 * scale}px sans-serif`;
         ctx.fillText(`You beat all levels!`, canvas.width / 2, canvas.height / 2 + 30 * scale);
     }
+
+    if (isPaused) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'white';
+        ctx.font = `bold ${60 * scale}px sans-serif`;
+        ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2);
+    }
 }
 
 function gameLoop() {
@@ -265,11 +275,14 @@ function runCountdown() {
         if (countdownValue <= 0) {
             clearInterval(countdownInterval);
             gameState = 'playing';
+            pauseBtn.style.display = 'block';
         }
     }, 1000);
 }
 
 function endRound() {
+    isPaused = false; pauseBtn.textContent = '⏸ Pause';
+    pauseBtn.style.display = 'none';
     const config = ROUND_CONFIG[currentRound - 1];
     if (score >= config.targetScore) {
         if (currentRound >= TOTAL_ROUNDS) {
@@ -289,7 +302,7 @@ function endRound() {
 }
 
 function handleShoot(e) {
-    if (gameState !== 'playing' || ammo <= 0) return;
+    if (gameState !== 'playing' || ammo <= 0 || isPaused) return;
     
     ammo--;
     ammoEl.textContent = ammo;
@@ -336,6 +349,13 @@ gameControlButton.addEventListener('click', () => {
         setupRound();
     } else if (gameState === 'menu') {
         setupRound();
+    }
+});
+
+pauseBtn.addEventListener('click', () => {
+    if (gameState === 'playing') {
+        isPaused = !isPaused;
+        pauseBtn.textContent = isPaused ? '▶ Resume' : '⏸ Pause';
     }
 });
 

@@ -77,6 +77,11 @@
             background-color: #2196F3; color: white; border: none;
             border-radius: 8px; font-size: 16px; cursor: pointer; z-index: 10;
         }
+        .pause-btn {
+            position: absolute; top: 15px; right: 145px; padding: 10px 15px;
+            background-color: #FF9800; color: white; border: none;
+            border-radius: 8px; font-size: 16px; cursor: pointer; z-index: 10;
+        }
 
         /* SEO Article Styles */
         .seo-article {
@@ -126,6 +131,7 @@
             .exit-button { padding: 5px 10px; font-size: 12px; top: 5px; left: 5px; }
             button { padding: 5px 10px; font-size: 14px; margin-top: 5px; }
             #challenge-display { margin-bottom: 5px; font-size: 14px; }
+            .pause-btn { padding: 5px 10px; font-size: 12px; top: 5px; right: 110px; }
         }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1665181964170021"
@@ -142,6 +148,7 @@
 
     <a href="index.html" class="exit-button">Back to Menu</a>
     <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    <button id="pauseBtn" class="pause-btn" style="display: none;">⏸ Pause</button>
     <h1>Basketball Free Throws</h1>
     <div id="challenge-display"></div>
     <canvas id="gameCanvas"></canvas>

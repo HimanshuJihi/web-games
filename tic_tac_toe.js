@@ -187,4 +187,10 @@ restartBtn.addEventListener('click', () => {
 });
 
 modeSelect.addEventListener('change', () => restartBtn.click());
-cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+cells.forEach(cell => {
+    cell.addEventListener('mousedown', handleCellClick); // Use mousedown for faster desktop response
+    cell.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        handleCellClick(e);
+    }, { passive: false });
+});

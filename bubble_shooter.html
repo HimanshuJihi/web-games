@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Bubble Shooter - Mlampic Games</title>
+    <meta name="description" content="Play the classic Bubble Shooter game on Mlampic Games. Aim, shoot, and pop bubbles to clear the board and get the highest score!">
+    <meta name="keywords" content="bubble shooter, bubble game, puzzle game, Mlampic Games, match 3">
+    <meta property="og:title" content="Bubble Shooter - Mlampic Games">
+    <!-- Favicon Setup -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" href="favicon.ico">
+    <style>
+        body {
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; background-color: #483D8B; /* Dark Slate Blue */
+            font-family: sans-serif;
+            margin: 0; padding: 60px 20px 40px 20px; box-sizing: border-box;
+            touch-action: manipulation; color: white; overscroll-behavior-y: contain;
+        }
+        h1 { margin: 5px 0; text-shadow: 0 0 10px rgba(255,255,255,0.5); font-size: 2.5rem; }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .info-bar {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 500px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        #gameCanvas {
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            touch-action: none;
+            cursor: pointer;
+        }
+
+        .controls { margin-top: 10px; }
+        .btn {
+            padding: 12px 30px; font-size: 18px; font-weight: bold; border-radius: 8px;
+            cursor: pointer; border: 2px solid white; color: white; background: #e74c3c;
+            transition: 0.2s; box-shadow: 0 4px 10px rgba(231, 76, 60, 0.4);
+        }
+        .btn:active { transform: scale(0.95); }
+
+        .exit-button {
+            position: absolute; top: 15px; left: 15px; padding: 10px 20px;
+            background-color: #c0392b; color: white; text-decoration: none;
+            border-radius: 8px; font-size: 16px; z-index: 10;
+        }
+        .fullscreen-btn {
+            position: absolute; top: 15px; right: 15px; padding: 10px 15px;
+            background-color: #2980b9; color: white; border: none;
+            border-radius: 8px; font-size: 16px; cursor: pointer; z-index: 10;
+        }
+
+        /* SEO Article Styles */
+        .seo-article {
+            width: 100%; max-width: 800px; background: rgba(255, 255, 255, 0.95);
+            padding: 30px; border-radius: 12px; margin-top: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); color: #333; line-height: 1.6;
+        }
+        .seo-article h2 { color: #483D8B; margin-top: 0; border-bottom: 2px solid #483D8B; padding-bottom: 10px; }
+        .seo-article h3 { color: #e74c3c; margin-top: 20px; }
+        .seo-article p, .seo-article ul { font-size: 16px; margin-bottom: 15px; }
+
+        @media (max-width: 500px) {
+            h1 { font-size: 2rem; }
+            .info-bar { font-size: 1rem; }
+        }
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1665181964170021" crossorigin="anonymous"></script>
+</head>
+<body>
+    <a href="index.html" class="exit-button">Back to Menu</a>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    
+    <h1>Bubble Shooter</h1>
+    
+    <div class="game-container">
+        <div class="info-bar">
+            <span>Score: <span id="score">0</span></span>
+            <span>High Score: <span id="highScore">0</span></span>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+        <div class="controls">
+            <button id="restartBtn" class="btn">Restart Game</button>
+        </div>
+    </div>
+
+    <!-- SEO Friendly Article Section -->
+    <div class="seo-article">
+        <h2>Play Bubble Shooter Online - Free HTML5 Puzzle Game</h2>
+        <p>Get ready for a timeless classic! <strong>Bubble Shooter</strong> on Mlampic Games is a fun and addictive puzzle game where the goal is to clear the board by popping colorful bubbles. It's easy to play but challenging to master. Play directly in your web browser with no downloads required.</p>
+        
+        <h3>How to Play Bubble Shooter?</h3>
+        <p>The objective is to clear all the bubbles from the screen by forming groups of three or more of the same color:</p>
+        <ul>
+            <li><strong>Aim and Shoot:</strong> Use your mouse or finger to aim the shooter at the bottom. A guideline will show you the trajectory. Click or release your finger to shoot the bubble.</li>
+            <li><strong>Match Colors:</strong> Your bubble will stick to the bubbles it hits. If your shot creates a group of 3 or more bubbles of the same color, they will all pop!</li>
+            <li><strong>Clear the Board:</strong> Popping bubbles can cause other bubbles attached below them to fall, giving you bonus points.</li>
+            <li><strong>Game Over:</strong> The game ends if the bubbles reach the bottom line of the screen.</li>
+        </ul>
+
+        <h3>Tips and Tricks for a High Score</h3>
+        <p>To become a Bubble Shooter pro, use these strategies:</p>
+        <ul>
+            <li><strong>Bank Shots:</strong> Use the side walls to your advantage! Bouncing bubbles off the walls can help you reach tricky spots.</li>
+            <li><strong>Go for High Clusters:</strong> Prioritize popping bubble clusters that are higher up. This can trigger a chain reaction, dropping all the bubbles attached below them for massive points.</li>
+            <li><strong>Plan Ahead:</strong> Look at the next bubble in your shooter to plan your next one or two moves in advance.</li>
+        </ul>
+    </div>
+
+    <script src="bubble_shooter.js"></script>
+    <script>
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+    </script>
+</body>
+</html>

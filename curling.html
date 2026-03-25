@@ -32,6 +32,7 @@
             width: 100%;
             max-width: min(95vw, 70vh * 1 / 2);
             aspect-ratio: 1 / 2;
+            touch-action: none; /* Prevent screen scrolling when swiping on the canvas */
         }
         button {
             margin-top: 10px;
@@ -66,6 +67,11 @@
         .fullscreen-btn {
             position: absolute; top: 15px; right: 15px; padding: 10px 15px;
             background-color: #2196F3; color: white; border: none;
+            border-radius: 8px; font-size: 16px; cursor: pointer; z-index: 10;
+        }
+        .pause-btn {
+            position: absolute; top: 15px; right: 145px; padding: 10px 15px;
+            background-color: #FF9800; color: white; border: none;
             border-radius: 8px; font-size: 16px; cursor: pointer; z-index: 10;
         }
 
@@ -115,6 +121,7 @@
             p { font-size: 12px; margin-top: 5px; }
             .settings { margin-bottom: 5px; }
             .exit-button { padding: 5px 10px; font-size: 12px; top: 5px; left: 5px; }
+            .pause-btn { padding: 5px 10px; font-size: 12px; top: 5px; right: 110px; }
         }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1665181964170021"
@@ -131,6 +138,7 @@
 
     <a href="index.html" class="exit-button">Back to Menu</a>
     <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    <button id="pauseBtn" class="pause-btn" style="display: none;">⏸ Pause</button>
         <p style="font-size: 12px; max-width: 400px; text-align: center;"><b>Scoring Rule:</b> At the end of a round, only the team with the stone closest to the center scores. That team gets 1 point for every stone that is closer to the center than the opponent's closest stone.</p>
 
     <div class="settings">

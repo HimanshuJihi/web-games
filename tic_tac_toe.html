@@ -31,6 +31,7 @@
         .board {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
             background-color: #16213e; padding: 15px; border-radius: 15px;
+            touch-action: none; /* Prevent screen scrolling when swiping on the board */
             box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 400px; width: 100%; aspect-ratio: 1/1;
         }
 

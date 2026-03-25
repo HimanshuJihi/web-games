@@ -6,6 +6,8 @@ const arrowsLeftEl = document.getElementById('arrows-left');
 const targetScoreEl = document.getElementById('target-score');
 const gameControlButton = document.getElementById('gameControlButton');
 const arrowSelectionContainer = document.getElementById('arrow-selection');
+const pauseBtn = document.getElementById('pauseBtn');
+let isPaused = false;
 
 // --- RESPONSIVE SETUP ---
 const DESIGN_WIDTH = 1280;
@@ -289,6 +291,14 @@ function draw() {
             ctx.fillText('You are the Archery Champion!', canvas.width / 2, canvas.height / 2 + 20 * scale);
             break;
     }
+
+    if (isPaused) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'white';
+        ctx.font = `bold ${50 * scale}px sans-serif`;
+        ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2);
+    }
 }
 
 // --- Game Logic ---
@@ -355,6 +365,7 @@ function setupLevel(levelIndex) {
     gameControlButton.textContent = `Start Level ${levelIndex + 1}`;
     gameControlButton.style.display = 'block';
     arrowSelectionContainer.style.display = 'none';
+    pauseBtn.style.display = 'none';
     resetArrow();
     draw();
 }
@@ -378,10 +389,13 @@ function runCountdown() {
 function startLevelGameplay() {
     gameState = 'aiming';
     arrowSelectionContainer.style.display = 'flex';
+    pauseBtn.style.display = 'block';
+    isPaused = false; pauseBtn.textContent = '⏸ Pause';
     resetArrow();
 }
 
 function update() {
+    if (isPaused) return;
     // --- Target Movement ---
     if (gameState === 'countdown' || gameState === 'aiming' || gameState === 'flying') {
         target.y += target.speedY;
@@ -475,6 +489,8 @@ function nextShot() {
 }
 
 function failLevel() {
+    isPaused = false; pauseBtn.textContent = '⏸ Pause';
+    pauseBtn.style.display = 'none';
     gameState = 'level_failed';
     gameControlButton.textContent = 'Retry Level';
     gameControlButton.style.display = 'block';
@@ -482,6 +498,8 @@ function failLevel() {
 }
 
 function completeLevel() {
+    isPaused = false; pauseBtn.textContent = '⏸ Pause';
+    pauseBtn.style.display = 'none';
     if (currentLevelIndex + 1 >= LEVELS.length) {
         gameState = 'game_complete';
         gameControlButton.textContent = 'Play Again';
@@ -510,21 +528,21 @@ function getEventPosition(e) {
 }
 
 function handleDragStart(e) {
-    if (gameState !== 'aiming') return;
+    if (gameState !== 'aiming' || isPaused) return;
     initAudio(); // स्टार्ट ऑडियो
     isDragging = true;
     dragStart = getEventPosition(e);
 }
 
 function handleDragMove(e) {
-    if (!isDragging) return;
+    if (!isDragging || isPaused) return;
     const currentPos = getEventPosition(e);
     dragPower.x = Math.max(-100 * scale, Math.min(0, currentPos.x - dragStart.x));
     dragPower.y = Math.max(-100 * scale, Math.min(100 * scale, currentPos.y - dragStart.y));
 }
 
 function handleDragEnd() {
-    if (!isDragging) return;
+    if (!isDragging || isPaused) return;
     isDragging = false;
     gameState = 'flying';
     arrow.velocityX = -dragPower.x * arrow.properties.powerFactor;
@@ -568,11 +586,25 @@ arrowSelectionButtons.forEach(button => {
     });
 });
 
+pauseBtn.addEventListener('click', () => {
+    if (gameState === 'aiming' || gameState === 'flying') {
+        isPaused = !isPaused;
+        pauseBtn.textContent = isPaused ? '▶ Resume' : '⏸ Pause';
+    }
+});
+
 canvas.addEventListener('mousedown', handleDragStart);
 canvas.addEventListener('mousemove', handleDragMove);
-window.addEventListener('mouseup', handleDragEnd);
-canvas.addEventListener('touchstart', handleDragStart, { passive: false });
-canvas.addEventListener('touchmove', handleDragMove, { passive: false });
+window.addEventListener('mouseup', handleDragEnd); // Use window to catch mouseup outside canvas
+
+canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    handleDragStart(e);
+}, { passive: false });
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    handleDragMove(e);
+}, { passive: false });
 window.addEventListener('touchend', handleDragEnd);
 
 window.addEventListener('resize', resizeCanvas);

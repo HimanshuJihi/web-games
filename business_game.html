@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Business Game (Monopoly) - Mlampic Games</title>
+    <meta name="description" content="Coming Soon: The classic Business board game, also known as Monopoly, on Mlampic Games. Buy, sell, and trade properties to build your empire!">
+    <meta name="keywords" content="business game, monopoly, board game, Mlampic Games, property trading game">
+    <meta property="og:title" content="Business Game - Coming Soon on Mlampic Games">
+    <!-- Favicon Setup -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" href="favicon.ico">
+    <style>
+        body {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh; background-color: #004d40; font-family: sans-serif;
+            margin: 0; padding: 60px 20px 40px 20px; box-sizing: border-box;
+            color: white; text-align: center;
+        }
+        h1 { margin: 5px 0; text-shadow: 0 0 15px rgba(255,255,255,0.6); font-size: 3rem; }
+        .coming-soon-text {
+            font-size: 1.5rem;
+            color: #b2dfdb;
+            margin-top: 10px;
+        }
+        .icon {
+            font-size: 6rem;
+            margin: 30px 0;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-15px); }
+        }
+
+        .exit-button {
+            position: absolute; top: 15px; left: 15px; padding: 10px 20px;
+            background-color: #d32f2f; color: white; text-decoration: none;
+            border-radius: 8px; font-size: 16px; z-index: 10;
+        }
+        .fullscreen-btn {
+            position: absolute; top: 15px; right: 15px; padding: 10px 15px;
+            background-color: #0277bd; color: white; border: none;
+            border-radius: 8px; font-size: 16px; cursor: pointer; z-index: 10;
+        }
+
+        /* SEO Article Styles */
+        .seo-article {
+            width: 100%; max-width: 800px; background: rgba(255, 255, 255, 0.95);
+            padding: 30px; border-radius: 12px; margin-top: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); color: #333; line-height: 1.6;
+        }
+        .seo-article h2 { color: #004d40; margin-top: 0; border-bottom: 2px solid #004d40; padding-bottom: 10px; }
+        .seo-article h3 { color: #00796b; margin-top: 20px; }
+        .seo-article p, .seo-article ul { font-size: 16px; margin-bottom: 15px; }
+
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1665181964170021" crossorigin="anonymous"></script>
+</head>
+<body>
+    <a href="index.html" class="exit-button">Back to Menu</a>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    
+    <h1>Business Game</h1>
+    <p class="coming-soon-text">Coming Soon!</p>
+    <div class="icon">🎲</div>
+
+    <!-- SEO Friendly Article Section -->
+    <div class="seo-article">
+        <h2>The Classic Business Game (Monopoly) is Coming to Mlampic!</h2>
+        <p>Get ready to roll the dice, build your empire, and bankrupt your opponents! We are excited to announce that the timeless <strong>Business board game</strong>, inspired by Monopoly, is currently under development and will be joining the Mlampic Games collection soon.</p>
+        
+        <h3>What to Expect?</h3>
+        <p>Our version of this classic game will feature:</p>
+        <ul>
+            <li><strong>Classic Gameplay:</strong> Buy, sell, and trade properties. Build houses and hotels to charge more rent.</li>
+            <li><strong>AI Opponents:</strong> Play against smart computer opponents with varying difficulty levels.</li>
+            <li><strong>Multiplayer Mode:</strong> Challenge your friends in a 'Player vs Player' mode on the same screen.</li>
+            <li><strong>Modern Interface:</strong> A clean, mobile-friendly design that makes managing your properties a breeze.</li>
+        </ul>
+        <p>Stay tuned for updates. This is going to be a big one!</p>
+    </div>
+
+    <script src="business_game.js"></script>
+    <script>
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+    </script>
+</body>
+</html>

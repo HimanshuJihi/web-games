@@ -9,6 +9,8 @@ const nextChallengeButton = document.getElementById('next-challenge-button');
 const retryButton = document.getElementById('retry-button');
 const shotClockDisplayEl = document.getElementById('shot-clock-display');
 const shotClockEl = document.getElementById('shot-clock');
+const pauseBtn = document.getElementById('pauseBtn');
+let isPaused = false;
 
 // --- RESPONSIVE SETUP ---
 const DESIGN_WIDTH = 400;
@@ -172,6 +174,7 @@ function startShotClock() {
     shotClockDisplayEl.style.display = 'inline';
 
     shotClockInterval = setInterval(() => {
+        if (isPaused) return;
         shotClockTime--;
         shotClockEl.textContent = shotClockTime;
         if (shotClockTime <= 0) {
@@ -232,6 +235,7 @@ function setupChallenge(challengeIndex) {
     currentScore = 0;
     shotsLeft = challenge.shots;
     gameState = 'playing';
+    pauseBtn.style.display = 'block';
 
     // Update UI
     challengeDisplayEl.innerHTML = `<h2>Level ${currentChallengeIndex + 1}</h2><p>Score ${challenge.target} baskets in ${challenge.shots} shots!</p>`;
@@ -248,6 +252,8 @@ function setupChallenge(challengeIndex) {
 }
 
 function update() {
+    if (isPaused) return;
+
     // --- Hoop Movement Logic ---
     if (hoop.speedX !== 0) {
         hoop.x += hoop.speedX;
@@ -302,6 +308,8 @@ function update() {
 
 function checkChallengeStatus() {
     if (gameState !== 'playing') return;
+    isPaused = false; pauseBtn.textContent = '⏸ Pause';
+    pauseBtn.style.display = 'none';
 
     const challenge = challenges[currentChallengeIndex];
 
@@ -333,6 +341,15 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawHoop();
     drawBall();
+
+    if (isPaused) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'white';
+        ctx.font = `bold ${30 * scale}px sans-serif`;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2);
+    }
 }
 
 function gameLoop() {
@@ -359,14 +376,14 @@ function getEventPosition(e) {
 }
 
 function handleDragStart(e) {
-    if (ball.isShooting || gameState !== 'playing') return;
+    if (ball.isShooting || gameState !== 'playing' || isPaused) return;
     isDragging = true;
     initAudio(); // जब खिलाड़ी पहली बार स्क्रीन छुए तब ऑडियो चालू करें
     dragStart = getEventPosition(e);
 }
 
 function handleDragEnd(e) {
-    if (!isDragging || gameState !== 'playing') return;
+    if (!isDragging || gameState !== 'playing' || isPaused) return;
     isDragging = false;
 
     const dragEnd = getEventPosition(e);
@@ -415,6 +432,13 @@ retryButton.addEventListener('click', () => {
         setupChallenge(0); // Play Again from level 1
     } else {
         setupChallenge(currentChallengeIndex); // Retry current level
+    }
+});
+
+pauseBtn.addEventListener('click', () => {
+    if (gameState === 'playing') {
+        isPaused = !isPaused;
+        pauseBtn.textContent = isPaused ? '▶ Resume' : '⏸ Pause';
     }
 });
 

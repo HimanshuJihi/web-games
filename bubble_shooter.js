@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let highScore = localStorage.getItem('bubbleShooterHighScore') || 0;
     let gameOver = false;
     let shotsFired = 0;
+    const GAME_SAVE_KEY = 'bubbleShooterSave';
 
     // --- Audio Setup ---
     let audioCtx = null;
@@ -256,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (newBubble.type === 'bomb') {
                 explodeBomb(newRow, newCol);
+                saveGame();
             } else {
                 const matches = findMatches(newRow, newCol);
                 if (matches.length >= 3) {
@@ -271,6 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
             shotsFired++;
             if (shotsFired % 6 === 0) {
                 addNewRow();
+                saveGame();
             }
 
             checkGameOver();
@@ -351,6 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (grid[bombR][bombC] && !bubblesToPop.some(b => b.r === bombR && b.c === bombC)) {
             bubblesToPop.push({ r: bombR, c: bombC });
+            grid[bombR][bombC] = null; // Remove the bomb itself
         }
 
         popBubbles(bubblesToPop);
@@ -413,6 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let c = 0; c < COLS; c++) {
             if (grid[ROWS - 1][c]) {
                 gameOver = true;
+                localStorage.removeItem(GAME_SAVE_KEY); // Clear save on game over
                 playSound('gameover');
                 break;
             }
@@ -462,7 +467,10 @@ document.addEventListener('DOMContentLoaded', () => {
         playSound('shoot');
     });
 
-    restartBtn.addEventListener('click', init);
+    restartBtn.addEventListener('click', () => {
+        localStorage.removeItem(GAME_SAVE_KEY); // Clear saved game
+        init(true); // Start a new game
+    });
 
-    init();
+    init(false); // Try to load game, if not, start new
 });

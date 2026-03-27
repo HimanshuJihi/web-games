@@ -293,7 +293,10 @@
     <div id="gameOverOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
         <h2 style="font-size: 4rem; color: #e74c3c; margin: 0; text-shadow: 0 0 20px #e74c3c;">BANKRUPT!</h2>
         <p id="gameOverText" style="font-size: 2rem; color: white; margin: 20px 0;"></p>
-        <button class="btn-primary" onclick="location.reload()" style="font-size: 1.5rem; padding: 15px 30px;">Play Again</button>
+        <div style="display: flex; gap: 20px;">
+            <button class="btn-primary" onclick="newGame()" style="font-size: 1.5rem; padding: 15px 30px; background-color: #3498db;">New Game</button>
+            <button class="btn-primary" onclick="location.reload()" style="font-size: 1.5rem; padding: 15px 30px;">Play Again</button>
+        </div>
     </div>
 
     <!-- Trade Modals -->

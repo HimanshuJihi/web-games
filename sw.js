@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mlampic-cache-v21';
+const CACHE_NAME = 'mlampic-cache-v23';
 
 // उन सभी फ़ाइलों की लिस्ट जिन्हें ऑफलाइन खेलने के लिए सेव करना है
 const urlsToCache = [
@@ -77,13 +77,21 @@ self.addEventListener('activate', event => {
 });
 
 // गेम खेलते समय फ़ाइलें कैश से लोड करें (जिससे गेम बिना इंटरनेट के चले)
-self.addEventListener('fetch', event => {
-    event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                // अगर फ़ाइल कैश में है, तो उसे दें, नहीं तो इंटरनेट से मंगाएं
-                if (response) return response;
-                return fetch(event.request);
-            })
-    );
+self.addEventListener('fetch', (event) => {
+    // index.html और rules.html के लिए, पहले नेटवर्क से लाने की कोशिश करें
+    if (event.request.url.includes('index.html') || event.request.url.includes('rules.html')) {
+        event.respondWith(
+            fetch(event.request).catch(() => caches.match(event.request))
+        );
+        return;
+    }
+
+    // अन्य सभी एसेट्स के लिए, पहले कैश से दें
+    event.respondWith(async function () {
+        const cachedResponse = await caches.match(event.request);
+        if (cachedResponse) {
+            return cachedResponse;
+        }
+        return fetch(event.request);
+    }());
 });

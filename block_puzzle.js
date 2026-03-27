@@ -27,12 +27,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const PIECE_COLORS = ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f', '#9b59b6', '#e67e22', '#1abc9c'];
 
     let score = 0;
-    let highScore = localStorage.getItem('blockPuzzleHighScore') || 0;
+    let highScore = parseInt(localStorage.getItem('blockPuzzleHighScore')) || 0;
     let currentPieces = [];
     let heldPiece = null;
     let heldPieceIndex = -1;
     let dragOffset = { x: 0, y: 0 };
     let gameOver = false;
+    const GAME_SAVE_KEY = 'blockPuzzleSave';
 
     // --- Audio Setup ---
     let audioCtx = null;
@@ -79,18 +80,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function init() {
+    function saveGame() {
+        const serializablePieces = currentPieces.map(piece => ({
+            shape: piece.shape,
+            color: piece.color,
+            placed: piece.placed
+        }));
+
+        const gameState = {
+            grid: grid,
+            score: score,
+            highScore: highScore,
+            currentPieces: serializablePieces,
+            gameOver: gameOver
+        };
+        localStorage.setItem(GAME_SAVE_KEY, JSON.stringify(gameState));
+    }
+
+    function loadGame() {
+        const savedState = localStorage.getItem(GAME_SAVE_KEY);
+        if (!savedState) return false;
+
+        const gameState = JSON.parse(savedState);
+        grid = gameState.grid;
+        score = gameState.score;
+        highScore = gameState.highScore;
+        gameOver = gameState.gameOver;
+
+        currentPieces = gameState.currentPieces.map((piece, i) => ({
+            shape: piece.shape,
+            color: piece.color,
+            x: (i * 3.3 + 0.5) * blockSize, // Recalculate x, y based on current blockSize
+            y: (GRID_SIZE + 0.5) * blockSize,
+            placed: piece.placed
+        }));
+        
+        heldPiece = null;
+        heldPieceIndex = -1;
+        dragOffset = { x: 0, y: 0 };
+
+        updateScore(0); // Update score display, will also update high score
+        return true;
+    }
+
+    function init(isNewGame = false) {
         const containerWidth = Math.min(window.innerWidth * 0.9, 400);
         blockSize = Math.floor(containerWidth / GRID_SIZE);
         canvas.width = GRID_SIZE * blockSize;
         canvas.height = (GRID_SIZE + 4) * blockSize; // Extra space for pieces
 
-        grid = Array(GRID_SIZE).fill(0).map(() => Array(GRID_SIZE).fill(0));
-        score = 0;
-        gameOver = false;
-        updateScore();
-        generateNewPieces();
-        draw();
+        if (!isNewGame && loadGame()) {
+            draw();
+        } else {
+            grid = Array(GRID_SIZE).fill(0).map(() => Array(GRID_SIZE).fill(0));
+            score = 0;
+            gameOver = false;
+            updateScore();
+            generateNewPieces(); // This will call checkGameOver which saves if not game over
+            draw();
+        }
     }
 
     function generateNewPieces() {
@@ -108,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 placed: false
             });
         }
+        saveGame(); // Save after generating new pieces
         checkGameOver();
     }
 
@@ -224,6 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+        saveGame(); // Save after placing a piece
         updateScore(points);
         playSound('place');
         clearLines();
@@ -279,14 +329,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (piece.placed) continue;
             for (let y = 0; y < GRID_SIZE; y++) {
                 for (let x = 0; x < GRID_SIZE; x++) {
-                    if (canPlace(piece, x, y)) {
+                    if (canPlace(piece, x, y)) { // If any piece can be placed, game is not over
+                        gameOver = false;
+                        saveGame(); // Save if game is still active
                         return; // Found a possible move, game is not over
                     }
                 }
             }
         }
-        gameOver = true;
         playSound('gameover');
+        gameOver = true; // Set gameOver to true only if no moves are possible
+        localStorage.removeItem(GAME_SAVE_KEY); // Clear save on game over
     }
 
     function getEventPosition(e) {
@@ -335,6 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (canPlace(heldPiece, gridX, gridY)) {
             placePiece(heldPiece, gridX, gridY);
             heldPiece.placed = true;
+            saveGame(); // Save after successful placement
         }
 
         heldPiece = null;
@@ -342,6 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (currentPieces.every(p => p.placed)) {
             generateNewPieces();
+            // generateNewPieces calls checkGameOver which calls saveGame
         }
         draw();
     }

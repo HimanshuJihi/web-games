@@ -44,8 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let players = [
         { id: 0, name: "Player 1", money: 1500, position: 0, colorClass: "red", hexColor: "#e74c3c" },
-        { id: 0, name: "Player 1", money: 1500, position: 0, colorClass: "red", hexColor: "#e74c3c", inJail: false, jailTurns: 0, doublesCount: 0 },
-        { id: 1, name: "Computer", money: 1500, position: 0, colorClass: "blue", hexColor: "#3498db", inJail: false, jailTurns: 0, doublesCount: 0 }
+        { id: 1, name: "Computer", money: 1500, position: 0, colorClass: "blue", hexColor: "#3498db" }
     ];
     let turn = 0; // 0 for Player 1, 1 for Player 2
     let currentSpace = null;
@@ -192,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 token.style.marginTop = '15px';
                 token.style.marginLeft = '15px';
             }
-            document.getElementById(`space-${p.position}`).appendChild(token);
+            document.getElementById(`space-${currentPosition}`).appendChild(token);
         });
     }
 
@@ -309,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearInterval(stepInterval);
                 updateUI();
                 setTimeout(() => {
-                    handleLanding(p); // handleLanding will now call finishPlayerAction
+                    handleLanding(p);
                 }, 400); // अपनी जगह पर पहुँचने के बाद थोड़ा रुककर एक्शन लें
             }
         }, 250); // हर कदम के बीच 250ms का समय (Speed)
@@ -323,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (p.inJail) { // If player is in jail, they don't move, so don't handle landing
                 return;
             }
-            
+
             if (currentSpace.owner === null) {
                 log(`Landed on ${spaceName}. Buy for ₹${currentSpace.price}?`);
                 if (p.money >= currentSpace.price) {
@@ -331,22 +330,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         // AI Buy Logic: Buy if it leaves at least ₹100 buffer
                         if (p.money >= currentSpace.price + 100) {
                             setTimeout(buyProperty, 1500);
-                        } else { // AI chooses not to buy
-                            setTimeout(finishPlayerAction, 1500);
+                        } else {
+                            setTimeout(skipTurn, 1500);
                         }
                     } else {
                         actionPanel.style.display = 'block';
                         buyBtn.style.display = 'inline-block';
                         upgradeBtn.style.display = 'none';
-                        endTurnBtn.onclick = finishPlayerAction; // Skip / End Turn button now calls finishPlayerAction
                     }
                 } else {
                     log(`Landed on ${spaceName} but you don't have enough money.`);
-                    setTimeout(finishPlayerAction, 2000);
+                    setTimeout(nextTurn, 2000);
                 }
             } else if (currentSpace.owner !== p.id) {
                 if (currentSpace.isMortgaged) {
                     log(`Landed on ${spaceName}, but it is mortgaged. No rent!`);
+                    setTimeout(nextTurn, 2000);
                     return;
                 }
                 let rent = currentSpace.rent;
@@ -358,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 players[currentSpace.owner].money += rent;
                 log(`Landed on ${spaceName} owned by Player ${currentSpace.owner + 1}. Paid ₹${rent} rent.`);
                 updateUI();
-                setTimeout(finishPlayerAction, 2500);
+                setTimeout(nextTurn, 2500);
             } else {
                 if (currentSpace.type === 'property' && currentSpace.level < 5) {
                     log(`You own ${spaceName}. Upgrade for ₹${currentSpace.upgradeCost}?`);
@@ -366,22 +365,23 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (isAITurn()) {
                             // AI Upgrade Logic: Upgrade if leaves a solid buffer
                             if (p.money >= currentSpace.upgradeCost + 200) {
-                                setTimeout(upgradeProperty, 1500);
+                                setTimeout(upgradeProperty, 1500); // upgradeProperty will call finishPlayerAction
                             } else {
-                                setTimeout(skipTurn, 1500);
+                                setTimeout(finishPlayerAction, 1500); // AI chooses not to upgrade
                             }
                         } else {
                             actionPanel.style.display = 'block';
                             buyBtn.style.display = 'none';
                             upgradeBtn.style.display = 'inline-block';
+                            endTurnBtn.onclick = finishPlayerAction; // Skip / End Turn button now calls finishPlayerAction
                         }
                     } else {
                         log(`You own ${spaceName}. Not enough money to upgrade.`);
-                        setTimeout(nextTurn, 2000);
+                        setTimeout(finishPlayerAction, 2000);
                     }
                 } else {
                     log(`Landed on your fully upgraded property (${spaceName}).`);
-                    setTimeout(nextTurn, 1500);
+                    setTimeout(finishPlayerAction, 1500);
                 }
             }
         } else if (currentSpace.type === 'tax') {
@@ -389,15 +389,16 @@ document.addEventListener('DOMContentLoaded', () => {
             log(`Landed on ${spaceName}. Paid ₹${currentSpace.price} in taxes.`);
             saveGame();
             updateUI();
-            setTimeout(nextTurn, 2000);
+            setTimeout(finishPlayerAction, 2000);
         } else if (spaceName === "GO TO JAIL") {
             log(`Go to JAIL!`);
             p.position = 10;
             p.inJail = true;
             p.jailTurns = 0; // Reset jail turns
+            p.doublesCount = 0; // Reset doubles count when going to jail
             log(`${p.name} was sent to Jail!`);
             updateTokens();
-            setTimeout(nextTurn, 2000);
+            setTimeout(finishPlayerAction, 2000); // Going to jail always ends turn
         } else if (currentSpace.type === 'chance' || currentSpace.type === 'community-chest') {
             const cards = currentSpace.type === 'chance' ? CHANCE_CARDS : COMMUNITY_CHEST_CARDS;
             const card = cards[Math.floor(Math.random() * cards.length)];
@@ -408,6 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 p.position = 10;
                 p.inJail = true;
                 p.jailTurns = 0;
+                p.doublesCount = 0; // Reset doubles count when going to jail
                 updateTokens();
             } else if (card.action === 'start') {
                 p.position = 0;
@@ -417,10 +419,10 @@ document.addEventListener('DOMContentLoaded', () => {
             updateUI();
             saveGame();
 
-            setTimeout(nextTurn, 3500); // 3.5 seconds to read the card before next turn
+            setTimeout(finishPlayerAction, 3500); // 3.5 seconds to read the card before next action
         } else {
             log(`Landed on ${spaceName}.`);
-            setTimeout(nextTurn, 1500);
+            setTimeout(finishPlayerAction, 1500);
         }
     }
 
@@ -435,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveGame();
         updateUI();
         actionPanel.style.display = 'none';
-        setTimeout(nextTurn, 1500);
+        setTimeout(finishPlayerAction, 1500);
     }
     buyBtn.addEventListener('click', buyProperty);
 
@@ -451,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveGame();
         updateUI();
         actionPanel.style.display = 'none';
-        setTimeout(nextTurn, 1500);
+        setTimeout(finishPlayerAction, 1500);
     }
     upgradeBtn.addEventListener('click', upgradeProperty);
 
@@ -797,22 +799,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function skipTurn() {
         actionPanel.style.display = 'none';
-        nextTurn();
+        finishPlayerAction();
     }
     endTurnBtn.addEventListener('click', skipTurn);
 
     function nextTurn() {
         saveGame(); // Save game state at the end of each turn
         aiHandleBankruptcy(players[turn]); // Let AI try to survive before turn ends
-        if (players[0].money < 0 || players[1].money < 0) return; // अगर गेम ओवर हो गया है तो बारी न बदलें
-        actionPanel.style.display = 'none';
-        nextTurn();
-    }
-    endTurnBtn.addEventListener('click', skipTurn);
+        if (checkGameOver()) return; // Check for game over and stop if it is
 
-    function nextTurn() {
-        aiHandleBankruptcy(players[turn]); // Let AI try to survive before turn ends
-        if (players[0].money < 0 || players[1].money < 0) return; // अगर गेम ओवर हो गया है तो बारी न बदलें
         actionPanel.style.display = 'none';
         turn = turn === 0 ? 1 : 0; // Switch turn
         updateUI();
@@ -910,7 +905,7 @@ document.addEventListener('DOMContentLoaded', () => {
             players[1].name = p2NameInput.value || "Computer"; // Default to Computer for PVE
             p2NameInput.disabled = true; // Default to PVE
             // Initialize inJail and jailTurns for new game
-            players.forEach(p => { p.inJail = false; p.jailTurns = 0; p.doublesCount = 0; });
+            players.forEach(p => { p.inJail = false; p.jailTurns = 0; });
             createBoard();
             log("Game Started! Player 1, roll the dice.");
         }

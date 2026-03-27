@@ -410,9 +410,11 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.addEventListener('touchmove', (e) => { e.preventDefault(); onMouseMove(e); }, { passive: false });
     window.addEventListener('touchend', onMouseUp);
 
-    restartBtn.addEventListener('click', init);
-    window.addEventListener('resize', init);
+    restartBtn.addEventListener('click', () => {
+        localStorage.removeItem(GAME_SAVE_KEY); // Clear saved game
+        init(true); // Start a new game
+    });
 
     highScoreEl.textContent = highScore;
-    init();
+    init(false); // Try to load game, if not, start new
 });

@@ -277,11 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             checkGameOver();
-        } else {
-            // If snap fails, reset projectile to avoid getting stuck
-            projectile = null;
-            currentBubble = nextBubble;
-            nextBubble = createRandomBubble();
         }
     }
 

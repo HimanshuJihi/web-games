@@ -43,14 +43,15 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     let players = [
-        { id: 0, name: "Player 1", money: 1500, position: 0, colorClass: "red", hexColor: "#e74c3c" },
-        { id: 1, name: "Computer", money: 1500, position: 0, colorClass: "blue", hexColor: "#3498db" }
+        { id: 0, name: "Player 1", money: 1500, position: 0, colorClass: "red", hexColor: "#e74c3c", adCooldown: 0, inJail: false, jailTurns: 0, doublesCount: 0 },
+        { id: 1, name: "Computer", money: 1500, position: 0, colorClass: "blue", hexColor: "#3498db", adCooldown: 0, inJail: false, jailTurns: 0, doublesCount: 0 }
     ];
     let turn = 0; // 0 for Player 1, 1 for Player 2
     let currentSpace = null;
 
     const boardElement = document.getElementById('game-board');
     const rollBtn = document.getElementById('rollDiceBtn');
+    const watchAdBtn = document.getElementById('watchAdBtn');
     const tradeBtn = document.getElementById('tradeBtn');
     const manageBtn = document.getElementById('manageBtn');
     const actionPanel = document.getElementById('action-panel');
@@ -63,6 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const p1InfoSpan = document.getElementById('p1-info');
     const p2InfoSpan = document.getElementById('p2-info');
     const p2NameInput = document.getElementById('p2NameInput');
+    const adPlayerContainer = document.getElementById('adPlayerContainer');
+    const adTimerEl = document.getElementById('adTimer');
 
     modeSelect.addEventListener('change', () => {
         if (modeSelect.value === 'pve') {
@@ -207,6 +210,13 @@ document.addEventListener('DOMContentLoaded', () => {
         checkGameOver();
     }
 
+    function updateAdButton() {
+        const p = players[turn];
+        // Enable if it's not an AI turn, the player is not in jail, the main buttons are enabled, and cooldown is 0
+        watchAdBtn.disabled = isAITurn() || p.inJail || rollBtn.disabled || p.adCooldown > 0;
+        watchAdBtn.textContent = p.adCooldown > 0 ? `Ad (Wait ${p.adCooldown})` : 'Ad for ₹200';
+    }
+
     function checkGameOver() {
         const gameOverOverlay = document.getElementById('gameOverOverlay');
         if (!gameOverOverlay) return false;
@@ -225,26 +235,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return false;
     }
-
-    function log(msg) {
-        logBox.innerHTML = `<strong>${players[turn].name}:</strong> ${msg}`;
-    }
-
+    
     function rollDice() {
         rollBtn.disabled = true;
         tradeBtn.disabled = true;
         manageBtn.disabled = true;
+        watchAdBtn.disabled = true; // Also disable ad button during roll
+        hideJailOptions(); // Hide jail options during roll animation
+
         log(`${players[turn].name} is rolling the dice...`);
 
         const dice1El = document.getElementById('dice1');
         const dice2El = document.getElementById('dice2');
         dice1El.classList.remove('landed');
         dice2El.classList.remove('landed');
-
+    
         let rollCount = 0;
         const maxRolls = 15;
         let d1, d2;
-
+    
         const rollInterval = setInterval(() => {
             d1 = Math.floor(Math.random() * 6) + 1;
             d2 = Math.floor(Math.random() * 6) + 1;
@@ -258,12 +267,89 @@ document.addEventListener('DOMContentLoaded', () => {
                 dice2El.classList.add('landed');
                 
                 const totalRoll = d1 + d2;
-                log(`${players[turn].name} rolled a ${totalRoll} (${d1} + ${d2}).`);
-                movePlayer(totalRoll);
+                const isDoubles = d1 === d2;
+                const p = players[turn];
+
+                log(`${p.name} rolled a ${totalRoll} (${d1} + ${d2})${isDoubles ? ' - DOUBLES!' : ''}.`);
+
+                if (p.inJail) {
+                    if (isDoubles) {
+                        p.inJail = false;
+                        p.jailTurns = 0;
+                        p.doublesCount = 0;
+                        log(`Rolled doubles! ${p.name} is free from Jail! Turn ends.`);
+                        updateTokens();
+                        setTimeout(finishPlayerAction, 2000);
+                    } else {
+                        log(`Did not roll doubles. Still in Jail.`);
+                        if (p.jailTurns >= 3) {
+                            log(`Third turn in jail. Must pay fine.`);
+                            setTimeout(() => payJailFine(true), 1500); // Force pay fine
+                        } else {
+                            setTimeout(finishPlayerAction, 2000); // Just end turn
+                        }
+                    }
+                } else { // Not in jail
+                    if (isDoubles) {
+                        p.doublesCount = (p.doublesCount || 0) + 1;
+                        if (p.doublesCount === 3) {
+                            log(`Rolled doubles 3 times! Go to JAIL!`);
+                            goToJail(p);
+                            setTimeout(finishPlayerAction, 2000); // Go to jail, turn ends
+                        } else {
+                            movePlayer(totalRoll); // Move and get another turn
+                        }
+                    } else {
+                        p.doublesCount = 0; // Reset doubles count
+                        movePlayer(totalRoll);
+                    }
+                }
             }
         }, 80);
     }
     rollBtn.addEventListener('click', rollDice);
+
+    function log(msg) {
+        logBox.innerHTML = `<strong>${players[turn].name}:</strong> ${msg}`;
+    }
+
+    watchAdBtn.addEventListener('click', () => {
+        if (watchAdBtn.disabled) return;
+
+        // Disable all controls
+        rollBtn.disabled = true;
+        tradeBtn.disabled = true;
+        manageBtn.disabled = true;
+        watchAdBtn.disabled = true;
+
+        // Show ad overlay
+        adPlayerContainer.style.display = 'flex';
+        let adTime = 5;
+        adTimerEl.textContent = `Reward in ${adTime}s...`;
+
+        const adInterval = setInterval(() => {
+            adTime--;
+            adTimerEl.textContent = `Reward in ${adTime}s...`;
+            if (adTime <= 0) {
+                clearInterval(adInterval);
+                adPlayerContainer.style.display = 'none';
+                
+                // Reward player
+                const p = players[turn];
+                p.money += 200;
+                p.adCooldown = 3; // Set cooldown for 3 turns
+                log(`Received ₹200 for watching an ad!`);
+                updateUI();
+                
+                // Re-enable controls
+                rollBtn.disabled = false;
+                tradeBtn.disabled = false;
+                manageBtn.disabled = false;
+                updateAdButton(); // Update ad button text/state
+                saveGame();
+            }
+        }, 1000);
+    });
 
     // --- SAVE/LOAD GAME LOGIC ---
     function saveGame() {
@@ -279,6 +365,15 @@ document.addEventListener('DOMContentLoaded', () => {
     window.newGame = function() {
         localStorage.removeItem('businessGameSave');
         location.reload();
+    }
+
+    function goToJail(player) {
+        player.position = 10;
+        player.inJail = true;
+        player.jailTurns = 0;
+        player.doublesCount = 0; // Reset doubles count when going to jail
+        log(`${player.name} was sent to Jail!`);
+        updateTokens();
     }
 
     // --- END SAVE/LOAD GAME LOGIC ---
@@ -392,12 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(finishPlayerAction, 2000);
         } else if (spaceName === "GO TO JAIL") {
             log(`Go to JAIL!`);
-            p.position = 10;
-            p.inJail = true;
-            p.jailTurns = 0; // Reset jail turns
-            p.doublesCount = 0; // Reset doubles count when going to jail
-            log(`${p.name} was sent to Jail!`);
-            updateTokens();
+            goToJail(p);
             setTimeout(finishPlayerAction, 2000); // Going to jail always ends turn
         } else if (currentSpace.type === 'chance' || currentSpace.type === 'community-chest') {
             const cards = currentSpace.type === 'chance' ? CHANCE_CARDS : COMMUNITY_CHEST_CARDS;
@@ -406,11 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (card.amount) {
                 p.money += card.amount;
             } else if (card.action === 'jail') {
-                p.position = 10;
-                p.inJail = true;
-                p.jailTurns = 0;
-                p.doublesCount = 0; // Reset doubles count when going to jail
-                updateTokens();
+                goToJail(p);
             } else if (card.action === 'start') {
                 p.position = 0;
                 p.money += 200;
@@ -557,6 +643,11 @@ document.addEventListener('DOMContentLoaded', () => {
     window.toggleMortgage = function(index, isMortgaging, amount) {
         const p = players[turn];
         const space = boardData[index];
+
+        if (isMortgaging && space.level > 0) {
+            alert("You must sell all buildings before mortgaging a property!");
+            return;
+        }
         
         if (isMortgaging) {
             p.money += amount;
@@ -740,7 +831,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentPlayer = players[turn];
         if (currentPlayer.doublesCount > 0 && !currentPlayer.inJail) {
             log(`${currentPlayer.name}, you rolled doubles! Roll again!`);
-            rollBtn.disabled = false; tradeBtn.disabled = false; manageBtn.disabled = false;
+            rollBtn.disabled = false; tradeBtn.disabled = false; manageBtn.disabled = false; updateAdButton();
             saveGame(); // Save game state after action, before next roll
         } else {
             nextTurn();
@@ -789,7 +880,11 @@ document.addEventListener('DOMContentLoaded', () => {
             saveGame();
             updateUI();
             hideJailOptions();
-            if (!isForced) rollDice(); // If player chose to pay, they now roll normally
+            if (isForced) {
+                setTimeout(finishPlayerAction, 1500); // If forced, end turn after paying
+            } else {
+                rollDice(); // If player chose to pay, they now roll normally
+            }
         } else {
             log(`${currentPlayer.name} doesn't have enough money to pay the fine!`);
             // This will trigger bankruptcy check in updateUI
@@ -812,6 +907,11 @@ document.addEventListener('DOMContentLoaded', () => {
         turn = turn === 0 ? 1 : 0; // Switch turn
         updateUI();
         const currentPlayer = players[turn];
+
+        // Reduce ad cooldown for the new current player
+        if (currentPlayer.adCooldown > 0) {
+            currentPlayer.adCooldown--;
+        }
         
         if (currentPlayer.inJail) {
             currentPlayer.jailTurns++; // Increment jail turns for the current player
@@ -828,6 +928,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             rollBtn.disabled = false; tradeBtn.disabled = false; manageBtn.disabled = false;
             hideJailOptions(); // Ensure jail options are hidden for normal turns
+            updateAdButton();
             log(`It's ${currentPlayer.name}'s turn. Roll the dice.`);
             if (isAITurn()) {
                 setTimeout(playAITurn, 1500);
@@ -861,13 +962,24 @@ document.addEventListener('DOMContentLoaded', () => {
         turn = gameState.turn;
         modeSelect.value = gameState.mode;
 
-        // Ensure all properties have isMortgaged and level, even if not explicitly saved
+        // Ensure all properties have new properties for save integrity
         boardData.forEach(space => {
             if (space.type === 'property' || space.type === 'railroad' || space.type === 'utility') {
                 if (typeof space.isMortgaged === 'undefined') space.isMortgaged = false;
+            }
+            if (space.type === 'property') {
                 if (typeof space.level === 'undefined') space.level = 0;
             }
         });
+
+        // Ensure all players have new properties for save integrity
+        players.forEach(p => {
+            if (typeof p.adCooldown === 'undefined') p.adCooldown = 0;
+            if (typeof p.inJail === 'undefined') p.inJail = false;
+            if (typeof p.jailTurns === 'undefined') p.jailTurns = 0;
+            if (typeof p.doublesCount === 'undefined') p.doublesCount = 0;
+        });
+
         createBoard(); // Re-create board with loaded data
         return true;
     }
@@ -899,13 +1011,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 rollBtn.disabled = false; tradeBtn.disabled = false; manageBtn.disabled = false;
             }
+            updateAdButton();
         } else {
             // No saved game, start a new one
             players[0].name = p1NameInput.value || "Player 1";
             players[1].name = p2NameInput.value || "Computer"; // Default to Computer for PVE
             p2NameInput.disabled = true; // Default to PVE
             // Initialize inJail and jailTurns for new game
-            players.forEach(p => { p.inJail = false; p.jailTurns = 0; });
+            players.forEach(p => { p.inJail = false; p.jailTurns = 0; p.adCooldown = 0; p.doublesCount = 0; });
             createBoard();
             log("Game Started! Player 1, roll the dice.");
         }

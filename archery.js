@@ -5,8 +5,11 @@ const scoreEl = document.getElementById('score');
 const arrowsLeftEl = document.getElementById('arrows-left');
 const targetScoreEl = document.getElementById('target-score');
 const gameControlButton = document.getElementById('gameControlButton');
-const arrowSelectionContainer = document.getElementById('arrow-selection');
+const arrowSelectionContainer = document.getElementById('arrow-selection'); 
 const pauseBtn = document.getElementById('pauseBtn');
+const watchAdButton = document.getElementById('watchAdButton');
+const adPlayerContainer = document.getElementById('adPlayerContainer');
+const closeAdButton = document.getElementById('closeAdButton');
 let isPaused = false;
 
 // --- RESPONSIVE SETUP ---
@@ -17,11 +20,19 @@ let scale = 1;
 const GRAVITY = 0.1;
 const TOTAL_ARROWS = 5;
 const LEVELS = [
+    // Levels 1-3: Stationary Target, increasing score
     { targetScore: 25, arrows: 5, speed: 0 },
     { targetScore: 35, arrows: 5, speed: 0 },
     { targetScore: 42, arrows: 5, speed: 0 },
-    { targetScore: 45, arrows: 5, speed: 2.5 },
-    { targetScore: 50, arrows: 5, speed: 2.5 }
+    // Levels 4-5: Stationary Target, high score (as per user request)
+    { targetScore: 45, arrows: 5, speed: 0 },
+    { targetScore: 50, arrows: 5, speed: 0 },
+    // Levels 6-10: Moving Target, increasing score (as per user request)
+    { targetScore: 10, arrows: 5, speed: 2.5 },
+    { targetScore: 15, arrows: 5, speed: 2.5 },
+    { targetScore: 20, arrows: 5, speed: 3.0 },
+    { targetScore: 25, arrows: 5, speed: 3.0 },
+    { targetScore: 30, arrows: 5, speed: 3.5 }
 ];
 const ARROW_TYPES = {
     standard: {
@@ -47,6 +58,7 @@ let arrowsLeft = 0;
 let gameState = 'menu'; // 'menu', 'countdown', 'aiming', 'flying', 'hit', 'level_failed', 'level_complete', 'game_complete'
 let currentArrowType = 'standard';
 let isDragging = false;
+let adWatchedThisLevel = false;
 let dragStart = { x: 0, y: 0 };
 let dragPower = { x: 0, y: 0 };
 
@@ -330,12 +342,14 @@ function stopAllIntervals() {
 
 function setupLevel(levelIndex) {
     stopAllIntervals();
+    adWatchedThisLevel = false; // विज्ञापन देखने की स्थिति रीसेट करें
     hitMarks = [];
     currentLevelIndex = levelIndex;
 
     if (levelIndex >= LEVELS.length) {
         gameState = 'game_complete';
         gameControlButton.textContent = 'Play Again';
+        watchAdButton.style.display = 'none';
         gameControlButton.style.display = 'block';
         arrowSelectionContainer.style.display = 'none';
         draw();
@@ -364,6 +378,7 @@ function setupLevel(levelIndex) {
     gameState = 'menu';
     gameControlButton.textContent = `Start Level ${levelIndex + 1}`;
     gameControlButton.style.display = 'block';
+    watchAdButton.style.display = 'none';
     arrowSelectionContainer.style.display = 'none';
     pauseBtn.style.display = 'none';
     resetArrow();
@@ -478,7 +493,7 @@ function nextShot() {
     // If not won, decrement arrows and check for loss condition
     arrowsLeft--;
     arrowsLeftEl.textContent = arrowsLeft;
-    if (arrowsLeft <= 0) {
+    if (arrowsLeft <= 0 && score < level.targetScore) {
         failLevel();
         return; // Stop further processing
     }
@@ -494,6 +509,12 @@ function failLevel() {
     gameState = 'level_failed';
     gameControlButton.textContent = 'Retry Level';
     gameControlButton.style.display = 'block';
+    // यदि इस स्तर पर विज्ञापन नहीं देखा गया है, तो विकल्प दिखाएं
+    if (!adWatchedThisLevel) {
+        watchAdButton.style.display = 'block';
+    } else {
+        watchAdButton.style.display = 'none';
+    }
     arrowSelectionContainer.style.display = 'none';
 }
 
@@ -502,14 +523,17 @@ function completeLevel() {
     pauseBtn.style.display = 'none';
     if (currentLevelIndex + 1 >= LEVELS.length) {
         gameState = 'game_complete';
+        watchAdButton.style.display = 'none';
         gameControlButton.textContent = 'Play Again';
         localStorage.setItem('archerySavedLevel', 0); // Game beaten, reset save for next time
     } else {
         gameState = 'level_complete';
+        watchAdButton.style.display = 'none';
         gameControlButton.textContent = 'Next Level';
         localStorage.setItem('archerySavedLevel', currentLevelIndex + 1); // Save unlocked next level
     }
     gameControlButton.style.display = 'block';
+    watchAdButton.style.display = 'none';
     arrowSelectionContainer.style.display = 'none';
 }
 
@@ -557,6 +581,7 @@ gameControlButton.addEventListener('click', () => {
     switch (gameState) {
         case 'menu':
             runCountdown();
+            watchAdButton.style.display = 'none';
             break;
         case 'level_failed':
             setupLevel(currentLevelIndex);
@@ -591,6 +616,69 @@ pauseBtn.addEventListener('click', () => {
         isPaused = !isPaused;
         pauseBtn.textContent = isPaused ? '▶ Resume' : '⏸ Pause';
     }
+});
+
+let adInterval = null; // विज्ञापन टाइमर के लिए
+
+function rewardPlayer() {
+    if (adInterval) clearInterval(adInterval);
+    adPlayerContainer.style.display = 'none';
+    adWatchedThisLevel = true;
+
+    arrowsLeft += 2; // 2 अतिरिक्त तीर दें
+    arrowsLeftEl.textContent = arrowsLeft;
+
+    // खेल फिर से शुरू करें
+    gameState = 'aiming';
+    arrowSelectionContainer.style.display = 'flex';
+    pauseBtn.style.display = 'block';
+    resetArrow();
+    draw();
+}
+
+watchAdButton.addEventListener('click', () => {
+    // गेम नियंत्रण छिपाएं, विज्ञापन प्लेयर दिखाएं
+    gameControlButton.style.display = 'none';
+    watchAdButton.style.display = 'none';
+    adPlayerContainer.style.display = 'flex';
+
+    // एक वास्तविक परिदृश्य में, आप यहां एक विज्ञापन नेटवर्क के SDK को एकीकृत करेंगे।
+    // इस सिमुलेशन के लिए, हम विज्ञापन चलने का प्रतिनिधित्व करने के लिए बस एक टाइमआउट का उपयोग करेंगे।
+
+    // हम 5-सेकंड के विज्ञापन का अनुकरण करेंगे।
+    let adTime = 5;
+    const adTimerEl = document.createElement('div');
+    adTimerEl.style.position = 'absolute';
+    adTimerEl.style.top = '10px';
+    adTimerEl.style.left = '10px';
+    adTimerEl.style.color = 'white';
+    adTimerEl.style.fontSize = '20px';
+    adTimerEl.style.background = 'rgba(0,0,0,0.5)';
+    adTimerEl.style.padding = '5px';
+    adTimerEl.style.borderRadius = '5px';
+    adTimerEl.style.zIndex = '101'; // सुनिश्चित करें कि यह शीर्ष पर है
+    adPlayerContainer.appendChild(adTimerEl);
+    adTimerEl.textContent = `Ad ends in ${adTime}s...`;
+
+    if (adInterval) clearInterval(adInterval);
+
+    adInterval = setInterval(() => {
+        adTime--;
+        adTimerEl.textContent = `Ad ends in ${adTime}s...`;
+        if (adTime <= 0) {
+            adPlayerContainer.removeChild(adTimerEl);
+            rewardPlayer();
+        }
+    }, 1000);
+});
+
+closeAdButton.addEventListener('click', () => {
+    if (adInterval) clearInterval(adInterval);
+    const adTimerEl = adPlayerContainer.querySelector('div[style*="position: absolute"]');
+    if (adTimerEl) adPlayerContainer.removeChild(adTimerEl);
+
+    adPlayerContainer.style.display = 'none';
+    failLevel(); // विकल्प फिर से दिखाएं
 });
 
 canvas.addEventListener('mousedown', handleDragStart);

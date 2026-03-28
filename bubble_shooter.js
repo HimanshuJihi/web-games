@@ -20,6 +20,39 @@ document.addEventListener('DOMContentLoaded', () => {
     let gameOver = false;
     let shotsFired = 0;
     const GAME_SAVE_KEY = 'bubbleShooterSave';
+    let gameLoopId = null;
+
+    function saveGame() {
+        if (gameOver) return;
+        const gameState = {
+            grid: grid,
+            score: score,
+            currentBubble: currentBubble,
+            nextBubble: nextBubble,
+            shotsFired: shotsFired
+        };
+        localStorage.setItem(GAME_SAVE_KEY, JSON.stringify(gameState));
+    }
+
+    function loadGame() {
+        const savedState = localStorage.getItem(GAME_SAVE_KEY);
+        if (savedState) {
+            try {
+                const gameState = JSON.parse(savedState);
+                if (!gameState.grid || !gameState.currentBubble) return false;
+                grid = gameState.grid;
+                score = gameState.score;
+                currentBubble = gameState.currentBubble;
+                nextBubble = gameState.nextBubble;
+                shotsFired = gameState.shotsFired;
+                return true;
+            } catch (e) {
+                localStorage.removeItem(GAME_SAVE_KEY);
+                return false;
+            }
+        }
+        return false;
+    }
 
     // --- Audio Setup ---
     let audioCtx = null;
@@ -58,46 +91,51 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function init() {
+    function init(forceNew = false) {
         canvas.width = COLS * BUBBLE_RADIUS * 2;
         canvas.height = ROWS * BUBBLE_RADIUS * 2;
-        gameOver = false;
-        score = 0;
-        shotsFired = 0;
-        updateScore();
         highScoreEl.textContent = highScore;
 
-        grid = [];
-        for (let r = 0; r < ROWS; r++) {
-            grid[r] = [];
-            for (let c = 0; c < COLS; c++) {
-                if (r < 6) { // Start with 6 rows of bubbles
-                    const isOffset = r % 2 !== 0;
-                    if (c < COLS - (isOffset ? 1 : 0)) {
-                        // Add a chance for a bomb bubble
-                        if (Math.random() < 0.05) { // 5% chance
-                            grid[r][c] = {
-                                type: 'bomb',
-                                color: '#333333',
-                                popping: false
-                            };
+        if (!forceNew && loadGame()) {
+            gameOver = false;
+            updateScore();
+            checkGameOver();
+            if (gameOver) {
+                init(true);
+                return;
+            }
+        } else {
+            gameOver = false;
+            score = 0;
+            shotsFired = 0;
+            updateScore();
+
+            grid = [];
+            for (let r = 0; r < ROWS; r++) {
+                grid[r] = [];
+                for (let c = 0; c < COLS; c++) {
+                    if (r < 6) { // Start with 6 rows of bubbles
+                        const isOffset = r % 2 !== 0;
+                        if (c < COLS - (isOffset ? 1 : 0)) {
+                            if (Math.random() < 0.05) { // 5% chance
+                                grid[r][c] = { type: 'bomb', color: '#333333', popping: false };
+                            } else {
+                                grid[r][c] = { type: 'normal', color: BUBBLE_COLORS[Math.floor(Math.random() * BUBBLE_COLORS.length)], popping: false };
+                            }
                         } else {
-                            grid[r][c] = {
-                                type: 'normal',
-                                color: BUBBLE_COLORS[Math.floor(Math.random() * BUBBLE_COLORS.length)],
-                                popping: false
-                            };
+                            grid[r][c] = null;
                         }
                     } else {
                         grid[r][c] = null;
                     }
-                } else {
-                    grid[r][c] = null;
                 }
             }
+            
+            generateNewBubbles();
+            saveGame();
         }
         
-        generateNewBubbles();
+        if (gameLoopId) cancelAnimationFrame(gameLoopId);
         gameLoop();
     }
 
@@ -353,7 +391,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         popBubbles(bubblesToPop);
-        playSound('bomb');
         setTimeout(dropFloatingBubbles, 200);
     }
 
@@ -390,6 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (droppedCount > 0) {
             updateScore(droppedCount * 20); // Bonus points for dropping
             playSound('pop', droppedCount);
+            saveGame();
         }
     }
 
@@ -405,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         }
         grid.unshift(newRow);
+        saveGame();
         checkGameOver();
     }
 
@@ -432,9 +471,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function gameLoop() {
         update();
         draw();
-        if (!gameOver) {
-            requestAnimationFrame(gameLoop);
-        }
+        gameLoopId = requestAnimationFrame(gameLoop);
+        if (gameOver) cancelAnimationFrame(gameLoopId);
     }
 
     // Mouse and Touch Controls

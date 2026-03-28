@@ -202,7 +202,8 @@
         <button class="arrow-btn" data-arrow-type="heavy">Heavy</button>
         <button class="arrow-btn" data-arrow-type="light">Light</button>
     </div>
-    <button id="gameControlButton" style="margin-top: 10px; padding: 10px 20px; font-size: 18px;">Start Game</button>
+    <button id="gameControlButton" style="margin-top: 10px; padding: 10px 20px; font-size: 18px; cursor: pointer;">Start Game</button>
+    <button id="watchAdButton" style="display: none; margin-top: 10px; padding: 10px 20px; font-size: 16px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Watch Ad for 2 Extra Arrows</button>
 
     <!-- SEO Friendly Article Section -->
     <div class="seo-article">
@@ -230,6 +231,16 @@
         <p>Enjoy a seamless gaming experience directly in your web browser. Mlampic Games are fully optimized for both desktop and mobile devices. Our Archery game is 100% free, privacy-friendly, and can even be played offline once loaded!</p>
     </div>
 
+    <!-- Ad Player Overlay -->
+    <div id="adPlayerContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center; display: none;">
+        <div style="position: relative; width: 80%; max-width: 640px; background: #000; padding: 20px; border-radius: 5px; text-align: center;">
+            <p style="color: white; font-size: 1.2rem;">Your ad is playing...</p>
+            <p style="color: #ccc; font-size: 0.9rem;">(This is a simulation. In a real game, a video ad from a network like Google AdMob would play here.)</p>
+            <!-- A real <video> element would go here, but we are simulating it with JS -->
+            <button id="closeAdButton" style="position: absolute; top: -10px; right: -10px; background: red; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; font-weight: bold; cursor: pointer;">X</button>
+        </div>
+    </div>
+
     <script src="archery.js"></script>
     <script>
         function toggleFullscreen() {
@@ -239,6 +250,44 @@
                 if (document.exitFullscreen) document.exitFullscreen();
             }
         }
+    </script>
+    <!-- User's requested ad script -->
+    <script>
+    (function(wwbla){
+    var d = document,
+        s = d.createElement('script'),
+        l = d.scripts[d.scripts.length - 1];
+    s.settings = wwbla || {};
+    s.src = "\/\/webbedtrash.com\/b.XlVdsXdrGQl\/0\/Y\/WEcs\/Megmu9eucZIUOl\/kyPJTzYC5sM\/DpYjyoO_D\/kEtzNTjxk-w\/Naj\/I\/5pMqwW";
+    s.async = true;
+    s.referrerPolicy = 'no-referrer-when-downgrade';
+    l.parentNode.insertBefore(s, l);
+    })({})
+    </script>
+    <!-- User's second requested ad script -->
+    <script>
+    (function(){
+        var d = document,
+            s = d.createElement('script'),
+            l = d.scripts[d.scripts.length - 1];
+        s.src = "https://baggymaintenance.com/d/miF.zAdjG/NQvDZnGfUE/PehmN9Bu_Z-UXljk/PUTFYS5dMyDNYP0dMKDpENtdNTj-kWw/NMjRQFwQN/QS";
+        s.async = true;
+        s.referrerPolicy = 'no-referrer-when-downgrade';
+        l.parentNode.insertBefore(s, l);
+    })();
+    </script>
+    <!-- User's third requested ad script -->
+    <script>
+    (function(qkjiay){
+    var d = document,
+        s = d.createElement('script'),
+        l = d.scripts[d.scripts.length - 1];
+    s.settings = qkjiay || {};
+    s.src = "\/\/webbedtrash.com\/b\/X.V-sYdOGzlW0\/YXW_ct\/ie\/mE9wuuZoUUlykUP\/TFYq5cMqDLYgzWNDzOcFtyNQjNk_wBNijKMB4xMsQI";
+    s.async = true;
+    s.referrerPolicy = 'no-referrer-when-downgrade';
+    l.parentNode.insertBefore(s, l);
+    })({})
     </script>
 </body>
 </html>

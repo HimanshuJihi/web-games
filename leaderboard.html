@@ -70,14 +70,37 @@
             padding: 15px 20px;
             border-radius: 10px;
             margin-bottom: 10px;
-            font-size: 1.2rem;
+        }
+        .game-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .leaderboard-item .game-title {
             font-weight: 600;
+            font-size: 1.2rem;
         }
         .leaderboard-item .game-score {
             font-weight: bold;
             color: #FFD700; /* Gold color for scores */
+            font-size: 1.1rem;
+            margin-top: 4px;
+        }
+        .play-now-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background 0.3s, transform 0.2s;
+            white-space: nowrap;
+            margin-left: 20px;
+        }
+        .play-now-btn:hover {
+            background: #45a049;
+            transform: scale(1.05);
         }
     </style>
 </head>

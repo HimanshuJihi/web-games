@@ -64,8 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const p1InfoSpan = document.getElementById('p1-info');
     const p2InfoSpan = document.getElementById('p2-info');
     const p2NameInput = document.getElementById('p2NameInput');
-    const adPlayerContainer = document.getElementById('adPlayerContainer');
-    const adTimerEl = document.getElementById('adTimer');
 
     modeSelect.addEventListener('change', () => {
         if (modeSelect.value === 'pve') {
@@ -316,39 +314,31 @@ document.addEventListener('DOMContentLoaded', () => {
     watchAdBtn.addEventListener('click', () => {
         if (watchAdBtn.disabled) return;
 
-        // Disable all controls
-        rollBtn.disabled = true;
-        tradeBtn.disabled = true;
-        manageBtn.disabled = true;
-        watchAdBtn.disabled = true;
+        const onAdSuccess = () => {
+            // Reward player
+            const p = players[turn];
+            p.money += 200;
+            p.adCooldown = 3; // Set cooldown for 3 turns
+            log(`Received ₹200 for watching an ad!`);
+            updateUI();
+            
+            // Re-enable controls
+            rollBtn.disabled = false;
+            tradeBtn.disabled = false;
+            manageBtn.disabled = false;
+            updateAdButton(); // Update ad button text/state
+            saveGame();
+        };
 
-        // Show ad overlay
-        adPlayerContainer.style.display = 'flex';
-        let adTime = 5;
-        adTimerEl.textContent = `Reward in ${adTime}s...`;
+        const onAdFailure = () => {
+            alert("Ad could not be loaded. Please try again later.");
+            rollBtn.disabled = false;
+            tradeBtn.disabled = false;
+            manageBtn.disabled = false;
+            updateAdButton();
+        };
 
-        const adInterval = setInterval(() => {
-            adTime--;
-            adTimerEl.textContent = `Reward in ${adTime}s...`;
-            if (adTime <= 0) {
-                clearInterval(adInterval);
-                adPlayerContainer.style.display = 'none';
-                
-                // Reward player
-                const p = players[turn];
-                p.money += 200;
-                p.adCooldown = 3; // Set cooldown for 3 turns
-                log(`Received ₹200 for watching an ad!`);
-                updateUI();
-                
-                // Re-enable controls
-                rollBtn.disabled = false;
-                tradeBtn.disabled = false;
-                manageBtn.disabled = false;
-                updateAdButton(); // Update ad button text/state
-                saveGame();
-            }
-        }, 1000);
+        rewardedAdManager.requestAd(onAdSuccess, onAdFailure);
     });
 
     // --- SAVE/LOAD GAME LOGIC ---
@@ -1024,5 +1014,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    rewardedAdManager.init('ima-ad-container');
     initializeGame();
 });

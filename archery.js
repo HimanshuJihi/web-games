@@ -6,10 +6,8 @@ const arrowsLeftEl = document.getElementById('arrows-left');
 const targetScoreEl = document.getElementById('target-score');
 const gameControlButton = document.getElementById('gameControlButton');
 const arrowSelectionContainer = document.getElementById('arrow-selection'); 
-const pauseBtn = document.getElementById('pauseBtn');
 const watchAdButton = document.getElementById('watchAdButton');
-const adPlayerContainer = document.getElementById('adPlayerContainer');
-const closeAdButton = document.getElementById('closeAdButton');
+const pauseBtn = document.getElementById('pauseBtn');
 let isPaused = false;
 
 // --- RESPONSIVE SETUP ---
@@ -111,7 +109,7 @@ function startBackgroundMusic() {
 }
 
 function playShootSound() {
-    if (!audioCtx) return;
+    if (!audioCtx || localStorage.getItem('sfxEnabled') === 'false') return;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = 'triangle';
@@ -125,7 +123,7 @@ function playShootSound() {
 }
 
 function playHitSound() {
-    if (!audioCtx) return;
+    if (!audioCtx || localStorage.getItem('sfxEnabled') === 'false') return;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = 'square';
@@ -256,8 +254,8 @@ function draw() {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // Draw trajectory prediction line for the first 3 levels
-    if (isDragging && gameState === 'aiming' && currentLevelIndex < 3) {
+    // Draw trajectory prediction line
+    if (isDragging && gameState === 'aiming') {
         const tempArrowProps = ARROW_TYPES[currentArrowType];
         const initialVx = -dragPower.x * tempArrowProps.powerFactor;
         const initialVy = -dragPower.y * tempArrowProps.powerFactor;
@@ -618,67 +616,28 @@ pauseBtn.addEventListener('click', () => {
     }
 });
 
-let adInterval = null; // विज्ञापन टाइमर के लिए
-
 function rewardPlayer() {
-    if (adInterval) clearInterval(adInterval);
-    adPlayerContainer.style.display = 'none';
     adWatchedThisLevel = true;
 
     arrowsLeft += 2; // 2 अतिरिक्त तीर दें
     arrowsLeftEl.textContent = arrowsLeft;
 
     // खेल फिर से शुरू करें
+    gameControlButton.style.display = 'none';
+    watchAdButton.style.display = 'none';
     gameState = 'aiming';
     arrowSelectionContainer.style.display = 'flex';
     pauseBtn.style.display = 'block';
     resetArrow();
-    draw();
+}
+
+function adFailed() {
+    alert("Ad could not be loaded. Please try again later.");
+    failLevel(); // Show the original fail screen options
 }
 
 watchAdButton.addEventListener('click', () => {
-    // गेम नियंत्रण छिपाएं, विज्ञापन प्लेयर दिखाएं
-    gameControlButton.style.display = 'none';
-    watchAdButton.style.display = 'none';
-    adPlayerContainer.style.display = 'flex';
-
-    // एक वास्तविक परिदृश्य में, आप यहां एक विज्ञापन नेटवर्क के SDK को एकीकृत करेंगे।
-    // इस सिमुलेशन के लिए, हम विज्ञापन चलने का प्रतिनिधित्व करने के लिए बस एक टाइमआउट का उपयोग करेंगे।
-
-    // हम 5-सेकंड के विज्ञापन का अनुकरण करेंगे।
-    let adTime = 5;
-    const adTimerEl = document.createElement('div');
-    adTimerEl.style.position = 'absolute';
-    adTimerEl.style.top = '10px';
-    adTimerEl.style.left = '10px';
-    adTimerEl.style.color = 'white';
-    adTimerEl.style.fontSize = '20px';
-    adTimerEl.style.background = 'rgba(0,0,0,0.5)';
-    adTimerEl.style.padding = '5px';
-    adTimerEl.style.borderRadius = '5px';
-    adTimerEl.style.zIndex = '101'; // सुनिश्चित करें कि यह शीर्ष पर है
-    adPlayerContainer.appendChild(adTimerEl);
-    adTimerEl.textContent = `Ad ends in ${adTime}s...`;
-
-    if (adInterval) clearInterval(adInterval);
-
-    adInterval = setInterval(() => {
-        adTime--;
-        adTimerEl.textContent = `Ad ends in ${adTime}s...`;
-        if (adTime <= 0) {
-            adPlayerContainer.removeChild(adTimerEl);
-            rewardPlayer();
-        }
-    }, 1000);
-});
-
-closeAdButton.addEventListener('click', () => {
-    if (adInterval) clearInterval(adInterval);
-    const adTimerEl = adPlayerContainer.querySelector('div[style*="position: absolute"]');
-    if (adTimerEl) adPlayerContainer.removeChild(adTimerEl);
-
-    adPlayerContainer.style.display = 'none';
-    failLevel(); // विकल्प फिर से दिखाएं
+    rewardedAdManager.requestAd(rewardPlayer, adFailed);
 });
 
 canvas.addEventListener('mousedown', handleDragStart);
@@ -698,5 +657,6 @@ window.addEventListener('touchend', handleDragEnd);
 window.addEventListener('resize', resizeCanvas);
 
 // Initial setup
+rewardedAdManager.init('ima-ad-container');
 resizeCanvas();
 gameLoop();

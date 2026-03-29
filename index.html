@@ -107,6 +107,21 @@
             from { opacity: 0; transform: translateY(40px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        .featured-game-container {
+            width: 100%;
+            max-width: 350px; /* Sized to fit one card nicely */
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .featured-game-container h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #FFD700;
+            text-shadow: 0 0 10px #FFD700;
+        }
+        .featured-game-container .game-card {
+            box-shadow: 0 10px 50px rgba(255, 215, 0, 0.3);
+        }
         /* Staggered Animation Delays for Game Cards */
         .game-card:nth-child(1) { animation-delay: 0.1s; }
         .game-card:nth-child(2) { animation-delay: 0.2s; }
@@ -195,6 +210,12 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
         }
+        .clear-cache-btn {
+            background-color: rgba(255, 152, 0, 0.8); /* Orange color */
+            border-color: rgba(255, 152, 0, 1);
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+        }
+        .clear-cache-btn:hover { background-color: rgba(255, 152, 0, 1); box-shadow: 0 6px 20px rgba(255, 152, 0, 0.5); }
         .reset-btn:hover {
             background-color: rgba(244, 67, 54, 1);
             transform: translateY(-2px);
@@ -234,6 +255,10 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+        .settings-page-btn:hover {
+            background-color: rgba(33, 150, 243, 1);
             box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
         }
         .setting-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5); }
@@ -295,14 +320,23 @@
     <div class="header">
         <img src="Mlampic_L.png" alt="Mlampic Games Logo" class="main-logo">
         <h1>🏆 Mlampic Games</h1>
-        <h2>Select Your Event</h2>
         <div class="menu-controls">
-            <button id="toggle-music-btn" class="setting-btn">🎵 Music: ON</button>
             <button id="share-game-btn" class="share-btn">🔗 Share Game</button>
-            <button id="reset-progress-btn" class="reset-btn">Reset All Progress</button>
+            <a href="settings.html" class="setting-btn settings-page-btn" style="text-decoration: none; background-color: rgba(33, 150, 243, 0.8); border-color: rgba(33, 150, 243, 1);">⚙️ Settings</a>
         </div>
     </div>
     
+    <!-- Featured Game Section -->
+    <div class="featured-game-container">
+        <h3>✨ Featured Game ✨</h3>
+        <a href="https://auctiontoarena.netlify.app/" class="game-card featured-card" target="_blank">
+            <div class="badge">NEW</div>
+            <img src="game-logo.png" alt="Cricket_t20 Logo" class="game-logo-img">
+            <span class="game-title">Cricket_t20</span>
+        </a>
+    </div>
+
+    <h2>Select Your Event</h2>
     <div class="game-grid">
         <a href="curling.html" class="game-card">
             <span class="game-icon">🥌</span>
@@ -360,16 +394,11 @@
             <span class="game-icon">🎲</span>
             <span class="game-title">Business Game</span>
         </a>
-        <a href="https://auctiontoarena.netlify.app/" class="game-card featured-card" target="_blank">
-            <div class="badge">NEW</div>
-            <img src="game-logo.png" alt="Cricket_t20 Logo" class="game-logo-img">
-
-            <span class="game-title">Cricket_t20</span>
-        </a>
     </div>
 
     <div class="footer">
         <a href="leaderboard.html">🏆 Leaderboards</a> |
+        <a href="settings.html">⚙️ Settings</a> |
         <a href="rules.html">How to Play</a> |
         <a href="about.html">About Us</a> | 
         <a href="privacy.html">Privacy Policy</a> | 
@@ -384,23 +413,6 @@
     </div>
 
     <script>
-        // Settings Logic for Background Music
-        const musicBtn = document.getElementById('toggle-music-btn');
-        let bgmEnabled = localStorage.getItem('bgmEnabled') !== 'false'; // true by default
-        
-        function updateMusicBtn() {
-            musicBtn.textContent = bgmEnabled ? '🎵 Music: ON' : '🔇 Music: OFF';
-            musicBtn.style.backgroundColor = bgmEnabled ? 'rgba(76, 175, 80, 0.8)' : 'rgba(158, 158, 158, 0.8)';
-            musicBtn.style.borderColor = bgmEnabled ? 'rgba(76, 175, 80, 1)' : 'rgba(158, 158, 158, 1)';
-        }
-        updateMusicBtn();
-
-        musicBtn.addEventListener('click', () => {
-            bgmEnabled = !bgmEnabled;
-            localStorage.setItem('bgmEnabled', bgmEnabled);
-            updateMusicBtn();
-        });
-
         // Share Game Logic
         document.getElementById('share-game-btn').addEventListener('click', async () => {
             const shareData = {
@@ -418,26 +430,6 @@
                 }
             } catch (err) {
                 console.error('Error sharing:', err);
-            }
-        });
-
-        document.getElementById('reset-progress-btn').addEventListener('click', () => {
-            if (confirm('Are you sure you want to reset all your game progress? This cannot be undone.')) {
-                localStorage.removeItem('archerySavedLevel');
-                localStorage.removeItem('targetSavedLevel');
-                localStorage.removeItem('skeetSavedRound');
-                localStorage.removeItem('basketballSavedChallenge');
-                localStorage.removeItem('sprintBestTime_easy');
-                localStorage.removeItem('sprintBestTime_medium');
-                localStorage.removeItem('sprintBestTime_hard');
-                localStorage.removeItem('sprintBestTime'); // Cleanup old global save
-                localStorage.removeItem('swimmingBestTime_easy');
-                localStorage.removeItem('swimmingBestTime_medium');
-                localStorage.removeItem('swimmingBestTime_hard');
-                localStorage.removeItem('longJumpBestScore');
-                localStorage.removeItem('javelinBestScore');
-                localStorage.removeItem('hoopStackLevel');
-                alert('All game progress has been successfully reset!');
             }
         });
 

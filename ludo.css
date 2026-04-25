@@ -1,0 +1,212 @@
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #333;
+    color: white;
+    margin: 0;
+}
+
+.top-left-controls {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10;
+}
+
+.exit-button {
+    padding: 10px 20px;
+    background-color: #f44336;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    text-align: left;
+}
+
+.setup-shortcut-btn {
+    background-color: #3498db;
+    border: none;
+    cursor: pointer;
+}
+.setup-shortcut-btn:hover { background-color: #2980b9; }
+
+.game-container {
+    display: flex;
+    gap: 20px;
+    /* align-items: flex-start; */
+    flex-direction: column; /* Stack canvas and controls vertically */
+    align-items: center;
+}
+
+#ludoCanvas {
+    border: 2px solid white;
+    background-color: #f0f0f0; /* This will be covered by the board drawing */
+    /* Let JS handle the size based on viewport */
+    width: 90vmin;
+    height: 90vmin;
+    max-width: 600px;
+    max-height: 600px;
+}
+
+#on-screen-controls {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    padding: 10px 0;
+    background: #2c3e50;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+#rollDiceBtn, #playAgainBtn, #pauseBtn, #fullscreenBtn {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: #2ecc71;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+#rollDiceBtn:hover, #playAgainBtn:hover, #pauseBtn:hover, #fullscreenBtn:hover {
+    background-color: #27ae60;
+}
+
+#pauseBtn { background-color: #f39c12; }
+#pauseBtn:hover { background-color: #e67e22; }
+#pauseBtn.resume-btn { background-color: #2ecc71; } /* Green for resume */
+#pauseBtn.resume-btn:hover { background-color: #27ae60; }
+
+#fullscreenBtn { background-color: #3498db; }
+#fullscreenBtn:hover { background-color: #2980b9; }
+
+/* --- Milestone 7 Styles --- */
+.overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+.overlay-content {
+    background: #444;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+}
+#winnerText {
+    font-size: 2.5rem;
+    color: #f1c40f;
+    margin-bottom: 20px;
+}
+
+/* --- Setup Screen Styles --- */
+.setup-panel {
+    max-width: 600px;
+}
+
+.player-setup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+    margin-top: 15px;
+}
+
+.player-setup-card {
+    background: #555;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 5px solid;
+    display: flex;
+    flex-direction: column;
+}
+
+.player-setup-card label {
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.player-active-check {
+    margin-right: 8px;
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.player-setup-card select, .player-setup-card input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    border: 1px solid #777;
+    background: #666;
+    color: white;
+    box-sizing: border-box;
+}
+
+.player-setup-card input:disabled {
+    background: #444;
+    cursor: not-allowed;
+}
+
+#startGameBtn {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    background-color: #27ae60;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+#startGameBtn:hover {
+    background-color: #2ecc71;
+}
+
+/* --- Responsive Design for Mobile --- */
+@media (max-width: 950px) {
+    #ludoCanvas {
+        width: 95vw;
+        height: 95vw;
+    }
+    #on-screen-controls {
+        width: 95vw;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .button-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+        padding: 0 10px;
+    }
+    .player-setup-grid {
+        grid-template-columns: 1fr;
+    }
+}

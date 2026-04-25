@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ludo Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="ludo.css"> <!-- Styles ke liye placeholder -->
+</head>
+<body>
+    <div class="top-left-controls">
+        <a href="index.html" class="exit-button"><i class="fa-solid fa-arrow-left"></i> Back to Menu</a>
+        <button id="openSetupBtn" class="exit-button setup-shortcut-btn"><i class="fa-solid fa-users-cog"></i> Setup</button>
+    </div>
+
+    <div class="game-container" style="display: none; position: relative;">
+        <canvas id="ludoCanvas"></canvas>
+
+        <div id="on-screen-controls">
+            <div class="button-group">
+                <button id="rollDiceBtn"><i class="fa-solid fa-dice"></i> Roll Dice</button>
+                <button id="pauseBtn"><i class="fa-solid fa-pause"></i> Pause</button>
+                <button id="fullscreenBtn"><i class="fa-solid fa-expand"></i> Fullscreen</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameOverOverlay" class="overlay">
+        <div class="overlay-content">
+            <h2 id="winnerText"></h2>
+            <button id="playAgainBtn"><i class="fa-solid fa-rotate-right"></i> Play Again</button>
+        </div>
+    </div>
+
+    <div id="setupOverlay" class="overlay" style="display: flex;">
+        <div class="overlay-content setup-panel">
+            <h2>Ludo Game Setup</h2>
+            <button id="resumeGameBtn" style="display: none; background-color: #3498db; margin-bottom: 20px;"><i class="fa-solid fa-play"></i> Resume Saved Game</button>
+            <hr id="resumeGameSeparator" style="display: none; width: 100%; border-color: #666; margin-bottom: 20px;">
+            
+            <h3>New Game</h3>
+            <div class="player-setup-grid">
+                <!-- Player 1 (Red) -->
+                <div class="player-setup-card" style="border-color: #e74c3c;">
+                    <label for="p1_active">
+                        <input type="checkbox" id="p1_active" class="player-active-check" checked> Player 1 (Red)
+                    </label>
+                    <select id="p1_type">
+                        <option value="human" selected>Human</option>
+                        <option value="ai">AI</option>
+                    </select>
+                    <input type="text" id="p1_name" value="Player 1" placeholder="Enter Name">
+                </div>
+                <!-- Player 2 (Blue) -->
+                <div class="player-setup-card" style="border-color: #3498db;">
+                    <label for="p2_active">
+                        <input type="checkbox" id="p2_active" class="player-active-check" checked> Player 2 (Blue)
+                    </label>
+                    <select id="p2_type">
+                        <option value="human">Human</option>
+                        <option value="ai" selected>AI</option>
+                    </select>
+                    <input type="text" id="p2_name" value="Player 2" placeholder="Enter Name" disabled>
+                </div>
+                <!-- Player 3 (Yellow) -->
+                <div class="player-setup-card" style="border-color: #f1c40f;">
+                    <label for="p3_active">
+                        <input type="checkbox" id="p3_active" class="player-active-check" checked> Player 3 (Yellow)
+                    </label>
+                    <select id="p3_type">
+                        <option value="human">Human</option>
+                        <option value="ai" selected>AI</option>
+                    </select>
+                    <input type="text" id="p3_name" value="Player 3" placeholder="Enter Name" disabled>
+                </div>
+                <!-- Player 4 (Green) -->
+                <div class="player-setup-card" style="border-color: #2ecc71;">
+                    <label for="p4_active">
+                        <input type="checkbox" id="p4_active" class="player-active-check" checked> Player 4 (Green)
+                    </label>
+                    <select id="p4_type">
+                        <option value="human">Human</option>
+                        <option value="ai" selected>AI</option>
+                    </select>
+                    <input type="text" id="p4_name" value="Player 4" placeholder="Enter Name" disabled>
+                </div>
+            </div>
+            <button id="startGameBtn"><i class="fa-solid fa-gamepad"></i> Start New Game</button>
+        </div>
+    </div>
+
+    <div id="pauseOverlay" class="overlay">
+        <div class="overlay-content">
+            <h2>PAUSED</h2>
+        </div>
+    </div>
+
+    <script src="ludo.js"></script>
+</body>
+</html>

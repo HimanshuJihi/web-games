@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>Carom Board - Mlampic Games</title>
+    <meta name="description" content="Play Carom Board on Mlampic Games. Aim, strike, and pocket the pieces to win!">
+    <meta name="keywords" content="carom board, carrom, board game, Mlampic Games, strike and pocket">
+    <meta property="og:title" content="Carom Board - Mlampic Games">
+    <!-- Favicon Setup -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" href="favicon.ico">
+    <style>
+        body {
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; background: linear-gradient(to bottom, #2E8B57, #1e5638);
+            font-family: 'Poppins', sans-serif;
+            margin: 0; padding: 60px 20px 40px 20px; box-sizing: border-box;
+            touch-action: manipulation; color: white; overscroll-behavior-y: contain;
+        }
+        h1 { margin: 5px 0; text-shadow: 0 0 10px rgba(255,255,255,0.5); font-size: 2.5rem; }
+
+        #setup-container {
+            background: rgba(0,0,0,0.2);
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .setup-option { display: flex; justify-content: space-between; align-items: center; }
+        .setup-option label { font-weight: 600; }
+        .setup-option select, .setup-option input {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-family: 'Poppins', sans-serif;
+            background: #f0f0f0;
+            width: 180px;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .info-bar span.active {
+            color: #f1c40f;
+            text-shadow: 0 0 8px #f1c40f;
+        }
+
+        .info-bar {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 500px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        #gameCanvas {
+            background-color: #8B4513; /* Wood Brown */
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            touch-action: none;
+            cursor: pointer;
+        }
+
+        .controls { margin-top: 10px; }
+        .btn {
+            padding: 12px 30px; font-size: 18px; font-weight: bold; border-radius: 8px;
+            cursor: pointer; border: 2px solid white; color: white; background: #e74c3c;
+            transition: 0.2s; box-shadow: 0 4px 10px rgba(231, 76, 60, 0.4);
+        }
+        .btn:active { transform: scale(0.95); }
+
+        .exit-button {
+            position: absolute; top: 15px; left: 15px; padding: 10px 20px;
+            background-color: #c0392b; color: white; text-decoration: none;
+            border-radius: 8px; font-size: 16px; z-index: 10;
+        }
+        .fullscreen-btn {
+            position: absolute; top: 15px; right: 15px; padding: 10px 15px;
+            background-color: #2980b9; color: white; border: none;
+            border-radius: 8px; font-size: 16px; cursor: pointer; z-index: 10;
+        }
+
+        /* SEO Article Styles */
+        .seo-article {
+            width: 100%; max-width: 800px; background: rgba(255, 255, 255, 0.95);
+            padding: 30px; border-radius: 12px; margin-top: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); color: #333; line-height: 1.6;
+        }
+        .seo-article h2 { color: #2E8B57; margin-top: 0; border-bottom: 2px solid #2E8B57; padding-bottom: 10px; }
+        .seo-article h3 { color: #e74c3c; margin-top: 20px; }
+        .seo-article p, .seo-article ul { font-size: 16px; margin-bottom: 15px; }
+
+        @media (max-width: 500px) {
+            h1 { font-size: 2rem; }
+            .info-bar { font-size: 1rem; }
+        }
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1665181964170021" crossorigin="anonymous"></script>
+</head>
+<body>
+    <a href="index.html" class="exit-button">Back to Menu</a>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    
+    <div id="setup-container">
+        <h2 style="text-align: center; margin-top: 0;">Game Setup</h2>
+        <div class="setup-option">
+            <label for="modeSelect">Game Mode:</label>
+            <select id="modeSelect">
+                <option value="p_vs_ai" selected>Player vs. AI</option>
+                <option value="pvp">Player vs. Player</option>
+                <option value="ai_vs_ai">AI vs. AI</option>
+            </select>
+        </div>
+        <div class="setup-option">
+            <label for="p1Name">Player 1:</label>
+            <input type="text" id="p1Name" value="Player 1" maxlength="12">
+        </div>
+        <div class="setup-option">
+            <label for="p2Name">Player 2:</label>
+            <input type="text" id="p2Name" value="Computer" maxlength="12">
+        </div>
+        <div class="setup-option" id="difficultySetup">
+            <label for="difficultySelect">AI Difficulty:</label>
+            <select id="difficultySelect">
+                <option value="normal">Normal</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+                <option value="expert">Expert</option>
+            </select>
+        </div>
+        <button id="resumeGameBtn" class="btn" style="margin-top: 10px; background: #3498db; display: none;">Resume Last Game</button>
+        <button id="startGameBtn" class="btn" style="margin-top: 10px; background: #27ae60;">Start Game</button>
+    </div>
+
+    <h1>Carom Board</h1>
+    
+    <div class="game-container" style="display: none;">
+        <div class="info-bar">
+            <span id="p1-info">Player 1: <span id="player1Score">0</span></span>
+            <span id="p2-info">Player 2: <span id="player2Score">0</span></span>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+        <div class="controls">
+            <button id="restartBtn" class="btn">Restart Game</button>
+        </div>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div id="gameOverOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+        <h2 id="winnerText" style="font-size: 3rem; color: #f1c40f; margin: 0; text-shadow: 0 0 20px #f1c40f;"></h2>
+        <p id="winnerScore" style="font-size: 1.5rem; margin: 20px 0;"></p>
+        <button id="playAgainBtn" class="btn" style="background: #27ae60;">Play Again</button>
+    </div>
+
+    <!-- SEO Friendly Article Section -->
+    <div class="seo-article" style="display: none;">
+        <h2>Play Carom Board Online - Free HTML5 Game</h2>
+        <p>Experience the classic game of Carom Board right in your browser! <strong>Carom Board</strong> on Mlampic Games brings the fun of this traditional strike-and-pocket game to your digital device. Aim your striker, pot the colored pieces, and try to pocket the queen to win!</p>
+        
+        <h3>How to Play Carom Board?</h3>
+        <p>The objective is to pocket all your assigned pieces (either white or black) before your opponent, and to pocket the red 'Queen' piece, covering it with one of your own pieces.</p>
+        <ul>
+            <li><strong>Aim:</strong> Click or tap on the striker to select it. Drag to set the aiming line and power.</li>
+            <li><strong>Strike:</strong> Release to hit the striker, sending it towards the carom pieces.</li>
+            <li><strong>Pocketing:</strong> If you pocket one of your pieces, you get another turn.</li>
+            <li><strong>The Queen:</strong> Pocketing the red Queen gives bonus points, but you must pocket one of your own pieces immediately after (on the same or next turn) to 'cover' it. If you fail to cover, the Queen is returned to the board.</li>
+            <li><strong>Fouls:</strong> Various actions can result in a foul, such as pocketing the striker, hitting the striker off the board, or failing to hit any piece. Fouls usually result in a penalty (e.g., returning a pocketed piece to the board).</li>
+        </ul>
+
+        <h3>Tips and Tricks for Carom Mastery</h3>
+        <p>To become a Carom Board champion, consider these strategies:</p>
+        <ul>
+            <li><strong>Precision is Key:</strong> Take your time to aim. Small adjustments can make a big difference.</li>
+            <li><strong>Control the Striker:</strong> Try to keep your striker on the board after a shot. Pocketing the striker is a foul.</li>
+            <li><strong>Plan Your Shots:</strong> Think a few moves ahead. How will your shot affect the position of other pieces? Can you set up an easy follow-up shot?</li>
+            <li><strong>Cover the Queen:</strong> Always prioritize covering the Queen once it's pocketed. It's a crucial part of scoring.</li>
+        </ul>
+    </div>
+
+    <script src="carom_board.js"></script>
+    <script>
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+    </script>
+</body>
+</html>

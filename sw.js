@@ -42,6 +42,8 @@ const urlsToCache = [
     './bubble_shooter.js',
     './business_game.html',
     './business_game.js',
+    './carom_board.html',
+    './carom_board.js',
     './manifest.json',
     './Mlampic_L.png',
     './Mlampic_d.png',
@@ -97,6 +99,11 @@ self.addEventListener('fetch', (event) => {
         if (cachedResponse) {
             return cachedResponse;
         }
-        return fetch(event.request);
+        try {
+            return await fetch(event.request);
+        } catch (error) {
+            console.warn('Network fetch failed, resource not in cache:', event.request.url);
+            return new Response('Offline content not available', { status: 503, statusText: 'Service Unavailable' });
+        }
     }());
 });

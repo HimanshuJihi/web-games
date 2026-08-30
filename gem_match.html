@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gem Match Endless - Mlampic Games</title>
+  <style>
+    :root {
+      --bg1: #0d1220;
+      --bg2: #171b35;
+      --panel: rgba(17, 24, 39, 0.9);
+      --border: rgba(255,255,255,0.14);
+      --text: #ecf7ff;
+      --accent: #74f0ff;
+      --gold: #ffd166;
+      --danger: #ff6b6b;
+      --green: #7ef29a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top, #203d78 0%, var(--bg1) 35%, var(--bg2) 100%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 26px 16px 40px;
+    }
+
+    .shell {
+      width: min(100%, 760px);
+      background: rgba(9, 14, 28, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 18px 18px 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .brand {
+      font-size: clamp(1.2rem, 2vw, 1.8rem);
+      font-weight: 800;
+      letter-spacing: 0.6px;
+    }
+
+    .nav-btn, .reset-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 16px;
+      cursor: pointer;
+      color: white;
+      font-weight: 700;
+      transition: transform 0.15s ease;
+    }
+
+    .nav-btn {
+      background: linear-gradient(135deg, #ff6b6b, #d90429);
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .reset-btn {
+      background: linear-gradient(135deg, #4cc9f0, #4361ee);
+    }
+
+    .nav-btn:hover, .reset-btn:hover { transform: translateY(-2px); }
+
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 10px;
+      text-align: center;
+    }
+
+    .label {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #bfd5ee;
+      margin-bottom: 4px;
+    }
+
+    .value {
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      font-weight: 800;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      gap: 8px;
+      background: rgba(10, 16, 31, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 12px;
+    }
+
+    .cell {
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      font-size: clamp(1.3rem, 2vw, 1.8rem);
+      cursor: pointer;
+      user-select: none;
+      border: 2px solid transparent;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+
+    .cell:hover { transform: translateY(-2px) scale(1.01); }
+    .cell.selected {
+      border-color: rgba(255,255,255,0.9);
+      box-shadow: 0 0 0 3px rgba(116, 240, 255, 0.35);
+    }
+
+    .gem-ruby { background: linear-gradient(135deg, #ff7b7b, #e63946); }
+    .gem-sapphire { background: linear-gradient(135deg, #7ae7ff, #4361ee); }
+    .gem-emerald { background: linear-gradient(135deg, #80ed99, #2a9d8f); }
+    .gem-gold { background: linear-gradient(135deg, #ffe66d, #f4a261); }
+    .gem-purple { background: linear-gradient(135deg, #d8b4ff, #7b2cbf); }
+    .gem-cyan { background: linear-gradient(135deg, #b9fbc0, #06d6a0); }
+    .gem-orange { background: linear-gradient(135deg, #ffd6a5, #f77f00); }
+
+    .footer {
+      display: flex;
+      justify-content: center;
+      margin-top: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .status {
+      margin-top: 14px;
+      text-align: center;
+      color: #dfeeff;
+      min-height: 24px;
+      font-weight: 600;
+    }
+
+    .seo-article {
+      width: 100%;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.96);
+      color: #1f2937;
+      border-radius: 16px;
+      padding: 28px 24px;
+      margin: 26px auto 0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+      line-height: 1.7;
+    }
+    .seo-article h2 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      color: #0f172a;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 10px;
+      font-size: clamp(1.7rem, 2.6vw, 2.5rem);
+    }
+    .seo-article h3 {
+      margin-top: 24px;
+      color: #d97706;
+      font-size: 1.3rem;
+    }
+    .seo-article p, .seo-article ul {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    .seo-article ul {
+      padding-left: 20px;
+    }
+
+    @media (max-width: 540px) {
+      .topbar { flex-wrap: wrap; justify-content: center; }
+      .hud { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .footer { flex-direction: column; }
+      .nav-btn, .reset-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">💎 Gem Match Endless</div>
+      <a href="index.html" class="nav-btn">Back to Menu</a>
+    </div>
+
+    <div class="hud">
+      <div class="stat">
+        <span class="label">Score</span>
+        <span id="score" class="value">0</span>
+      </div>
+      <div class="stat">
+        <span class="label">Best</span>
+        <span id="best" class="value">0</span>
+      </div>
+      <div class="stat">
+        <span class="label">Combo</span>
+        <span id="combo" class="value">x1</span>
+      </div>
+      <div class="stat">
+        <span class="label">Moves</span>
+        <span id="moves" class="value">0</span>
+      </div>
+    </div>
+
+    <div id="board" class="board" aria-label="Gem board"></div>
+
+    <div class="footer">
+      <button id="resetBtn" class="reset-btn">New Board</button>
+    </div>
+
+    <div id="status" class="status">Swap gems to make a match of 3 or more.</div>
+
+    <div class="seo-article">
+      <h2>Play Gem Match Endless Online - Free HTML5 Match 3 Game</h2>
+      <p>Gem Match Endless is a relaxing and addictive puzzle game inspired by classic match-3 action. The goal is to swap neighboring gems and create groups of three or more. Each successful move clears the board and keeps the challenge going forever.</p>
+      <h3>How to Play Gem Match?</h3>
+      <p>Tap or click two adjacent gems to swap their positions. If the swap creates a row or column of three or more matching gems, those gems disappear and score points. The board then falls and refills automatically.</p>
+      <ul>
+        <li><strong>Match 3 or more:</strong> Create lines to clear gems and gain points.</li>
+        <li><strong>Build combos:</strong> Multiple matches in one move can create big score boosts.</li>
+        <li><strong>Keep the board moving:</strong> If no move is possible, the game shuffles the board.</li>
+        <li><strong>Endless play:</strong> There is no fixed level end, so you can keep matching forever.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="gem_match.js"></script>
+  <!-- User's requested ad script -->
+    <script>
+    (function(wwbla){
+    var d = document,
+        s = d.createElement('script'),
+        l = d.scripts[d.scripts.length - 1];
+    s.settings = wwbla || {};
+    s.src = "\/\/webbedtrash.com\/b.XlVdsXdrGQl\/0\/Y\/WEcs\/Megmu9eucZIUOl\/kyPJTzYC5sM\/DpYjyoO_D\/kEtzNTjxk-w\/Naj\/I\/5pMqwW";
+    s.async = true;
+    s.referrerPolicy = 'no-referrer-when-downgrade';
+    l.parentNode.insertBefore(s, l);
+    })({})
+    </script>
+    <!-- User's second requested ad script -->
+    <script>
+    (function(){
+        var d = document,
+            s = d.createElement('script'),
+            l = d.scripts[d.scripts.length - 1];
+        s.src = "https://baggymaintenance.com/d/miF.zAdjG/NQvDZnGfUE/PehmN9Bu_Z-UXljk/PUTFYS5dMyDNYP0dMKDpENtdNTj-kWw/NMjRQFwQN/QS";
+        s.async = true;
+        s.referrerPolicy = 'no-referrer-when-downgrade';
+        l.parentNode.insertBefore(s, l);
+    })();
+    </script>
+    <!-- User's third requested ad script -->
+    <script>
+    (function(qkjiay){
+    var d = document,
+        s = d.createElement('script'),
+        l = d.scripts[d.scripts.length - 1];
+    s.settings = qkjiay || {};
+    s.src = "\/\/webbedtrash.com\/b\/X.V-sYdOGzlW0\/YXW_ct\/ie\/mE9wuuZoUUlykUP\/TFYq5cMqDLYgzWNDzOcFtyNQjNk_wBNijKMB4xMsQI";
+    s.async = true;
+    s.referrerPolicy = 'no-referrer-when-downgrade';
+    l.parentNode.insertBefore(s, l);
+    })({})
+    </script>
+</body>
+</html>

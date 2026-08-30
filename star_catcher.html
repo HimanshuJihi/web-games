@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Star Catcher - Mlampic Games</title>
+    <meta name="description" content="Play Star Catcher, a fun arcade game where you catch glowing stars and dodge bombs before time runs out.">
+    <style>
+        :root {
+            --bg-1: #071a34;
+            --bg-2: #101a3d;
+            --panel: rgba(10, 18, 38, 0.72);
+            --panel-border: rgba(255, 255, 255, 0.15);
+            --text: #eef7ff;
+            --accent: #5ee7ff;
+            --accent-2: #ffd166;
+            --danger: #ff5d8f;
+            --success: #7ef29a;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at top, #173d73 0%, var(--bg-1) 30%, var(--bg-2) 100%);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px 16px 40px;
+        }
+
+        .game-shell {
+            width: min(100%, 620px);
+            background: rgba(8, 18, 36, 0.7);
+            border: 1px solid var(--panel-border);
+            border-radius: 26px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+            padding: 18px 18px 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .brand .emoji { font-size: 1.9rem; }
+
+        .exit-button,
+        .restart-btn,
+        .start-btn {
+            border: none;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            font-weight: 700;
+            transition: transform 0.15s ease, box-shadow 0.2s ease;
+        }
+
+        .exit-button {
+            text-decoration: none;
+            background: linear-gradient(135deg, #ff6b6b, #e63946);
+            padding: 10px 16px;
+            box-shadow: 0 8px 20px rgba(230, 57, 70, 0.35);
+        }
+
+        .restart-btn,
+        .start-btn {
+            background: linear-gradient(135deg, #3ec5ff, #4d79ff);
+            padding: 12px 20px;
+            box-shadow: 0 8px 20px rgba(77, 121, 255, 0.35);
+        }
+
+        .exit-button:hover,
+        .restart-btn:hover,
+        .start-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .hud {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .stat-box {
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 14px;
+            padding: 10px 8px;
+            text-align: center;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 0.72rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #b9d2f0;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            font-weight: 800;
+        }
+
+        .canvas-wrap {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: linear-gradient(180deg, rgba(12, 25, 52, 0.9), rgba(6, 15, 28, 0.96));
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background:
+                radial-gradient(circle at top, rgba(120, 192, 255, 0.22), transparent 30%),
+                linear-gradient(180deg, #081b3e 0%, #0a1533 100%);
+            touch-action: none;
+        }
+
+        .status-banner {
+            position: absolute;
+            inset: auto 0 16px 0;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .status-pill {
+            background: rgba(9, 15, 27, 0.6);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 999px;
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: #dff3ff;
+            backdrop-filter: blur(8px);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 18px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .instructions {
+            margin-top: 20px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 14px 16px;
+            color: #dfeeff;
+            line-height: 1.6;
+            font-size: 0.96rem;
+        }
+
+        .instructions strong { color: #ffd166; }
+
+        .seo-article {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.96);
+            color: #1f2937;
+            border-radius: 16px;
+            padding: 28px 24px;
+            margin: 26px auto 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+            line-height: 1.7;
+        }
+        .seo-article h2 {
+            margin-top: 0;
+            margin-bottom: 18px;
+            color: #0b1d42;
+            border-bottom: 2px solid #0b1d42;
+            padding-bottom: 10px;
+            font-size: clamp(1.7rem, 2.6vw, 2.5rem);
+        }
+        .seo-article h3 {
+            margin-top: 24px;
+            color: #e63946;
+            font-size: 1.3rem;
+        }
+        .seo-article p, .seo-article ul {
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+        .seo-article ul {
+            padding-left: 20px;
+        }
+
+        @media (max-width: 540px) {
+            .topbar {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hud {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .restart-btn,
+            .start-btn,
+            .exit-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-shell">
+        <div class="topbar">
+            <div class="brand"><span class="emoji">🌠</span> <span>Star Catcher</span></div>
+            <a href="index.html" class="exit-button">Back to Menu</a>
+        </div>
+
+        <div class="hud">
+            <div class="stat-box">
+                <span class="stat-label">Score</span>
+                <span id="score" class="stat-value">0</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Best</span>
+                <span id="best-score" class="stat-value">0</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Lives</span>
+                <span id="lives" class="stat-value">3</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Time</span>
+                <span id="timer" class="stat-value">45</span>
+            </div>
+        </div>
+
+        <div class="canvas-wrap">
+            <canvas id="gameCanvas" width="480" height="620"></canvas>
+            <div class="status-banner">
+                <div id="statusText" class="status-pill">Tap Start to Play</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="startBtn" class="start-btn">Start Game</button>
+            <button id="restartBtn" class="restart-btn">Restart</button>
+        </div>
+
+        <div class="instructions">
+            <strong>How to play:</strong> Catch glowing stars for points, avoid dark bombs, and keep your ship alive until the timer ends. Move with mouse, touch, or arrow keys. Bonus hearts restore a life.
+        </div>
+
+        <div class="seo-article">
+            <h2>Play Star Catcher Online - Free HTML5 Arcade Game</h2>
+            <p>Star Catcher is a fast and colorful arcade game where you move a rocket ship across the screen and catch glowing stars while avoiding dangerous bombs. The challenge gets more intense as time passes, making it perfect for short bursts of fun on both desktop and mobile.</p>
+            <h3>How to Play Star Catcher?</h3>
+            <p>Use your mouse, touch controls, or arrow keys to move the ship left and right. Catch stars for points, collect hearts for extra lives, and avoid the dark bombs that can end your run.</p>
+            <ul>
+                <li><strong>Catch stars:</strong> Earn 10 points for every successful catch.</li>
+                <li><strong>Avoid bombs:</strong> Each bomb costs one life, so stay sharp.</li>
+                <li><strong>Collect hearts:</strong> These give you an extra life and help keep your streak alive.</li>
+                <li><strong>Beat your best:</strong> Try to finish with the highest score before the timer ends.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="star_catcher.js"></script>
+    <!-- User's requested ad script -->
+    <script>
+    (function(wwbla){
+    var d = document,
+        s = d.createElement('script'),
+        l = d.scripts[d.scripts.length - 1];
+    s.settings = wwbla || {};
+    s.src = "\/\/webbedtrash.com\/b.XlVdsXdrGQl\/0\/Y\/WEcs\/Megmu9eucZIUOl\/kyPJTzYC5sM\/DpYjyoO_D\/kEtzNTjxk-w\/Naj\/I\/5pMqwW";
+    s.async = true;
+    s.referrerPolicy = 'no-referrer-when-downgrade';
+    l.parentNode.insertBefore(s, l);
+    })({})
+    </script>
+    <!-- User's second requested ad script -->
+    <script>
+    (function(){
+        var d = document,
+            s = d.createElement('script'),
+            l = d.scripts[d.scripts.length - 1];
+        s.src = "https://baggymaintenance.com/d/miF.zAdjG/NQvDZnGfUE/PehmN9Bu_Z-UXljk/PUTFYS5dMyDNYP0dMKDpENtdNTj-kWw/NMjRQFwQN/QS";
+        s.async = true;
+        s.referrerPolicy = 'no-referrer-when-downgrade';
+        l.parentNode.insertBefore(s, l);
+    })();
+    </script>
+    <!-- User's third requested ad script -->
+    <script>
+    (function(qkjiay){
+    var d = document,
+        s = d.createElement('script'),
+        l = d.scripts[d.scripts.length - 1];
+    s.settings = qkjiay || {};
+    s.src = "\/\/webbedtrash.com\/b\/X.V-sYdOGzlW0\/YXW_ct\/ie\/mE9wuuZoUUlykUP\/TFYq5cMqDLYgzWNDzOcFtyNQjNk_wBNijKMB4xMsQI";
+    s.async = true;
+    s.referrerPolicy = 'no-referrer-when-downgrade';
+    l.parentNode.insertBefore(s, l);
+    })({})
+    </script>
+</body>
+</html>

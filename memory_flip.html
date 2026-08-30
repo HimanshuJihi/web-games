@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memory Flip Endless - Mlampic Games</title>
+  <style>
+    :root {
+      --bg1: #081a2b;
+      --bg2: #101833;
+      --panel: rgba(14, 24, 42, 0.8);
+      --border: rgba(255,255,255,0.12);
+      --text: #ecf8ff;
+      --accent: #7ef9ff;
+      --gold: #ffd166;
+      --danger: #ff758f;
+      --okay: #8ef5b6;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: radial-gradient(circle at top, #1d4d7a 0%, var(--bg1) 35%, var(--bg2) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 24px 16px 40px;
+    }
+
+    .shell {
+      width: min(100%, 760px);
+      background: rgba(7, 15, 31, 0.77);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      padding: 18px 18px 20px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .brand {
+      font-size: clamp(1.2rem, 2vw, 1.8rem);
+      font-weight: 800;
+      letter-spacing: 0.6px;
+    }
+
+    .nav-btn, .reset-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 16px;
+      cursor: pointer;
+      color: white;
+      font-weight: 700;
+      transition: transform 0.15s ease;
+    }
+
+    .nav-btn {
+      text-decoration: none;
+      background: linear-gradient(135deg, #ff7b7b, #e63946);
+      display: inline-block;
+    }
+
+    .reset-btn {
+      background: linear-gradient(135deg, #74f0ff, #4361ee);
+    }
+
+    .nav-btn:hover, .reset-btn:hover { transform: translateY(-2px); }
+
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 10px;
+      text-align: center;
+    }
+
+    .label {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #bfd5ee;
+      margin-bottom: 4px;
+    }
+
+    .value {
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      font-weight: 800;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      background: rgba(11, 20, 37, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 12px;
+    }
+
+    .card {
+      aspect-ratio: 1 / 1;
+      border: none;
+      border-radius: 15px;
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      cursor: pointer;
+      background: linear-gradient(135deg, #2c547d, #1c3557);
+      color: white;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+      font-weight: 800;
+    }
+
+    .card:hover { transform: translateY(-2px); }
+    .card.revealed {
+      background: linear-gradient(135deg, #93c5fd, #60a5fa);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.25);
+    }
+    .card.matched {
+      background: linear-gradient(135deg, #86efac, #2fbf71);
+      cursor: default;
+      box-shadow: 0 0 0 2px rgba(142, 245, 182, 0.8);
+    }
+
+    .status {
+      margin-top: 14px;
+      text-align: center;
+      min-height: 24px;
+      font-weight: 600;
+      color: #dff5ff;
+    }
+
+    .seo-article {
+      width: 100%;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.96);
+      color: #1f2937;
+      border-radius: 16px;
+      padding: 28px 24px;
+      margin: 26px auto 0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+      line-height: 1.7;
+    }
+    .seo-article h2 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      color: #0f172a;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 10px;
+      font-size: clamp(1.7rem, 2.6vw, 2.5rem);
+    }
+    .seo-article h3 {
+      margin-top: 24px;
+      color: #2563eb;
+      font-size: 1.3rem;
+    }
+    .seo-article p, .seo-article ul {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    .seo-article ul {
+      padding-left: 20px;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 540px) {
+      .topbar { flex-wrap: wrap; justify-content: center; }
+      .hud { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .nav-btn, .reset-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">🧠 Memory Flip Endless</div>
+      <a href="index.html" class="nav-btn">Back to Menu</a>
+    </div>
+
+    <div class="hud">
+      <div class="stat">
+        <span class="label">Score</span>
+        <span id="score" class="value">0</span>
+      </div>
+      <div class="stat">
+        <span class="label">Best</span>
+        <span id="best" class="value">0</span>
+      </div>
+      <div class="stat">
+        <span class="label">Moves</span>
+        <span id="moves" class="value">0</span>
+      </div>
+      <div class="stat">
+        <span class="label">Round</span>
+        <span id="round" class="value">1</span>
+      </div>
+    </div>
+
+    <div id="grid" class="grid"></div>
+
+    <div class="footer">
+      <button id="resetBtn" class="reset-btn">New Round</button>
+    </div>
+
+    <div id="status" class="status">Match all cards to advance to the next round.</div>
+
+    <div class="seo-article">
+      <h2>Play Memory Flip Endless Online - Free HTML5 Brain Game</h2>
+      <p>Memory Flip Endless is a clever brain game where players reveal hidden cards and match pairs before time runs out in each round. As the game progresses, the board grows bigger and the challenge becomes more demanding, making it a perfect test of focus and memory.</p>
+      <h3>How to Play Memory Flip?</h3>
+      <p>Flip two cards at a time and try to find identical symbols. When a pair matches, it stays open and you earn points. Every cleared round pushes you into a harder challenge with more cards to remember.</p>
+      <ul>
+        <li><strong>Match pairs:</strong> Find two identical symbols to complete a pair.</li>
+        <li><strong>Track patterns:</strong> Remember positions of the cards you have seen.</li>
+        <li><strong>Solve faster:</strong> Fewer moves means better score and stronger performance.</li>
+        <li><strong>Round progression:</strong> Higher rounds bring bigger puzzles and more rewards.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="memory_flip.js"></script>
+  <!-- User's requested ad script -->
+    <script>
+    (function(wwbla){
+    var d = document,
+        s = d.createElement('script'),
+        l = d.scripts[d.scripts.length - 1];
+    s.settings = wwbla || {};
+    s.src = "\/\/webbedtrash.com\/b.XlVdsXdrGQl\/0\/Y\/WEcs\/Megmu9eucZIUOl\/kyPJTzYC5sM\/DpYjyoO_D\/kEtzNTjxk-w\/Naj\/I\/5pMqwW";
+    s.async = true;
+    s.referrerPolicy = 'no-referrer-when-downgrade';
+    l.parentNode.insertBefore(s, l);
+    })({})
+    </script>
+    <!-- User's second requested ad script -->
+    <script>
+    (function(){
+        var d = document,
+            s = d.createElement('script'),
+            l = d.scripts[d.scripts.length - 1];
+        s.src = "https://baggymaintenance.com/d/miF.zAdjG/NQvDZnGfUE/PehmN9Bu_Z-UXljk/PUTFYS5dMyDNYP0dMKDpENtdNTj-kWw/NMjRQFwQN/QS";
+        s.async = true;
+        s.referrerPolicy = 'no-referrer-when-downgrade';
+        l.parentNode.insertBefore(s, l);
+    })();
+    </script>
+    <!-- User's third requested ad script -->
+    <script>
+    (function(qkjiay){
+    var d = document,
+        s = d.createElement('script'),
+        l = d.scripts[d.scripts.length - 1];
+    s.settings = qkjiay || {};
+    s.src = "\/\/webbedtrash.com\/b\/X.V-sYdOGzlW0\/YXW_ct\/ie\/mE9wuuZoUUlykUP\/TFYq5cMqDLYgzWNDzOcFtyNQjNk_wBNijKMB4xMsQI";
+    s.async = true;
+    s.referrerPolicy = 'no-referrer-when-downgrade';
+    l.parentNode.insertBefore(s, l);
+    })({})
+    </script>
+</body>
+</html>

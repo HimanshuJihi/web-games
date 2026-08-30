@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Sky Dodge - Mlampic Games</title>
+  <style>
+    :root {
+      --bg1: #071521;
+      --bg2: #0f1d39;
+      --panel: rgba(9, 15, 31, 0.8);
+      --border: rgba(255,255,255,0.12);
+      --text: #ebf8ff;
+      --accent: #7ef9ff;
+      --gold: #ffd166;
+      --danger: #ff6b6b;
+      --good: #8ef5b6;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top, #123e6f 0%, var(--bg1) 35%, var(--bg2) 100%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 16px 40px;
+    }
+
+    .shell {
+      width: min(100%, 620px);
+      background: rgba(8, 17, 30, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      padding: 18px 18px 20px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .brand {
+      font-size: clamp(1.2rem, 2vw, 1.8rem);
+      font-weight: 800;
+      letter-spacing: 0.6px;
+    }
+
+    .nav-btn, .start-btn, .restart-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 16px;
+      cursor: pointer;
+      color: white;
+      font-weight: 700;
+      transition: transform 0.15s ease;
+    }
+
+    .nav-btn {
+      text-decoration: none;
+      background: linear-gradient(135deg, #ff7b7b, #e63946);
+      display: inline-block;
+    }
+
+    .start-btn, .restart-btn {
+      background: linear-gradient(135deg, #7ef9ff, #4361ee);
+    }
+
+    .nav-btn:hover, .start-btn:hover, .restart-btn:hover { transform: translateY(-2px); }
+
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 10px;
+      text-align: center;
+    }
+
+    .label {
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #bfd5ee;
+      font-size: 0.72rem;
+      margin-bottom: 4px;
+    }
+
+    .value {
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      font-weight: 800;
+    }
+
+    .arena-wrap {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #0b1d35 0%, #07121c 100%);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: linear-gradient(180deg, rgba(21,54,88,0.8), rgba(6,13,22,1));
+      touch-action: none;
+    }
+
+    .status {
+      margin-top: 14px;
+      text-align: center;
+      min-height: 24px;
+      font-weight: 600;
+    }
+
+    .seo-article {
+      width: 100%;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.96);
+      color: #1f2937;
+      border-radius: 16px;
+      padding: 28px 24px;
+      margin: 26px auto 0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+      line-height: 1.7;
+    }
+    .seo-article h2 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      color: #0f172a;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 10px;
+      font-size: clamp(1.7rem, 2.6vw, 2.5rem);
+    }
+    .seo-article h3 {
+      margin-top: 24px;
+      color: #2563eb;
+      font-size: 1.3rem;
+    }
+    .seo-article p, .seo-article ul {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    .seo-article ul {
+      padding-left: 20px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 540px) {
+      .topbar { flex-wrap: wrap; justify-content: center; }
+      .actions { flex-direction: column; }
+      .nav-btn, .start-btn, .restart-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">🚀 Sky Dodge</div>
+      <a href="index.html" class="nav-btn">Back to Menu</a>
+    </div>
+
+    <div class="hud">
+      <div class="stat">
+        <span class="label">Score</span>
+        <span id="score" class="value">0</span>
+      </div>
+      <div class="stat">
+        <span class="label">Best</span>
+        <span id="best" class="value">0</span>
+      </div>
+      <div class="stat">
+        <span class="label">Lives</span>
+        <span id="lives" class="value">3</span>
+      </div>
+    </div>
+
+    <div class="arena-wrap">
+      <canvas id="gameCanvas" width="520" height="620"></canvas>
+    </div>
+
+    <div class="actions">
+      <button id="startBtn" class="start-btn">Start</button>
+      <button id="restartBtn" class="restart-btn">Restart</button>
+    </div>
+
+    <div id="status" class="status">Dodge the meteors and stay alive.</div>
+
+    <div class="seo-article">
+      <h2>Play Sky Dodge Online - Free HTML5 Arcade Survival Game</h2>
+      <p>Sky Dodge is a thrilling survival game where you control a small spaceship and try to stay alive while meteors and hazards fall from the sky. The longer you survive, the more points you earn and the faster the challenge becomes.</p>
+      <h3>How to Play Sky Dodge?</h3>
+      <p>Move left or right using keyboard arrows, touch input, or mouse movement to dodge incoming meteors. Avoid collisions, collect bonus stars, and keep your three lives alive for as long as possible.</p>
+      <ul>
+        <li><strong>Move constantly:</strong> Stay centered and react quickly to sudden meteor drops.</li>
+        <li><strong>Avoid collisions:</strong> Every hit takes away a life.</li>
+        <li><strong>Collect stars:</strong> Bonus stars increase your score.</li>
+        <li><strong>Survive longer:</strong> Longer survival times mean bigger rewards and better rankings.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="sky_dodge.js"></script>
+  <!-- User's requested ad script -->
+    <script>
+    (function(wwbla){
+    var d = document,
+        s = d.createElement('script'),
+        l = d.scripts[d.scripts.length - 1];
+    s.settings = wwbla || {};
+    s.src = "\/\/webbedtrash.com\/b.XlVdsXdrGQl\/0\/Y\/WEcs\/Megmu9eucZIUOl\/kyPJTzYC5sM\/DpYjyoO_D\/kEtzNTjxk-w\/Naj\/I\/5pMqwW";
+    s.async = true;
+    s.referrerPolicy = 'no-referrer-when-downgrade';
+    l.parentNode.insertBefore(s, l);
+    })({})
+    </script>
+    <!-- User's second requested ad script -->
+    <script>
+    (function(){
+        var d = document,
+            s = d.createElement('script'),
+            l = d.scripts[d.scripts.length - 1];
+        s.src = "https://baggymaintenance.com/d/miF.zAdjG/NQvDZnGfUE/PehmN9Bu_Z-UXljk/PUTFYS5dMyDNYP0dMKDpENtdNTj-kWw/NMjRQFwQN/QS";
+        s.async = true;
+        s.referrerPolicy = 'no-referrer-when-downgrade';
+        l.parentNode.insertBefore(s, l);
+    })();
+    </script>
+    <!-- User's third requested ad script -->
+    <script>
+    (function(qkjiay){
+    var d = document,
+        s = d.createElement('script'),
+        l = d.scripts[d.scripts.length - 1];
+    s.settings = qkjiay || {};
+    s.src = "\/\/webbedtrash.com\/b\/X.V-sYdOGzlW0\/YXW_ct\/ie\/mE9wuuZoUUlykUP\/TFYq5cMqDLYgzWNDzOcFtyNQjNk_wBNijKMB4xMsQI";
+    s.async = true;
+    s.referrerPolicy = 'no-referrer-when-downgrade';
+    l.parentNode.insertBefore(s, l);
+    })({})
+    </script>
+</body>
+</html>
